@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ColorScan">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>색깔 감지기</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface2: #1e1e1e;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0f0f0;
+    --muted: #888;
+    --accent: #fff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+
+  .header {
+    width: 100%;
+    padding: 20px 24px 0;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px;
+    letter-spacing: 2px;
+    color: #fff;
+    line-height: 1;
+  }
+  .header span {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 300;
+  }
+
+  /* Install banner */
+  #install-banner {
+    display: none;
+    width: min(100vw, 420px);
+    margin-top: 12px;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  #install-banner p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 1px;
+  }
+  #install-banner button {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .stage {
+    position: relative;
+    width: min(100vw, 420px);
+    margin-top: 20px;
+  }
+
+  .camera-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #000;
+    overflow: hidden;
+  }
+
+  .corner {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .corner-tl { top: 12px; left: 12px; border-top: 2px solid rgba(255,255,255,0.7); border-left: 2px solid rgba(255,255,255,0.7); }
+  .corner-tr { top: 12px; right: 12px; border-top: 2px solid rgba(255,255,255,0.7); border-right: 2px solid rgba(255,255,255,0.7); }
+  .corner-bl { bottom: 12px; left: 12px; border-bottom: 2px solid rgba(255,255,255,0.7); border-left: 2px solid rgba(255,255,255,0.7); }
+  .corner-br { bottom: 12px; right: 12px; border-bottom: 2px solid rgba(255,255,255,0.7); border-right: 2px solid rgba(255,255,255,0.7); }
+
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .reticle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 5;
+  }
+  .reticle-ring {
+    width: 48px;
+    height: 48px;
+    border: 1.5px solid rgba(255,255,255,0.9);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .reticle-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.1); opacity: 0.5; }
+  }
+
+  .scan-line {
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: scan 3s linear infinite;
+    pointer-events: none;
+    z-index: 4;
+    display: none;
+  }
+  @keyframes scan {
+    0% { top: 0%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+
+  .overlay-start {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.7);
+    cursor: pointer;
+    z-index: 20;
+    gap: 12px;
+    transition: opacity 0.3s;
+  }
+  .overlay-start svg { opacity: 0.8; }
+  .overlay-start p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 300;
+  }
+
+  .info-panel {
+    width: 100%;
+    padding: 0 0 20px;
+  }
+
+  .color-display {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--border);
+  }
+  .color-swatch {
+    width: 90px;
+    min-height: 90px;
+    background: #1a1a1a;
+    transition: background-color 0.4s ease;
+    flex-shrink: 0;
+  }
+  .color-info {
+    flex: 1;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    border-left: 1px solid var(--border);
+  }
+  .color-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 300;
+  }
+  .color-name-kr {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1;
+    transition: color 0.4s ease;
+    color: #fff;
+  }
+  .color-hex {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: monospace;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  .rgb-bars {
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .bar-label {
+    font-size: 11px;
+    color: var(--muted);
+    width: 14px;
+    font-family: monospace;
+    font-weight: 500;
+  }
+  .bar-track {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .bar-r .bar-fill { background: #e74c4c; }
+  .bar-g .bar-fill { background: #2ecc71; }
+  .bar-b .bar-fill { background: #3498db; }
+  .bar-val {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: monospace;
+    width: 28px;
+    text-align: right;
+  }
+
+  .status-row {
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+  .status-dot.active {
+    background: #2ecc71;
+    animation: blink 1.5s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .status-text {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 300;
+  }
+
+  .bottom-bar {
+    padding: 0 18px 12px;
+    display: flex;
+    gap: 8px;
+  }
+  .btn-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 7px 14px;
+    font-size: 11px;
+    font-family: 'Noto Sans KR', sans-serif;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+  }
+  .btn-action:hover { border-color: rgba(255,255,255,0.2); color: #fff; }
+  .btn-action.on { border-color: rgba(255,255,255,0.3); color: #fff; }
+  .btn-icon { font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>COLORSCAN</h1>
+  <span>색깔 감지기</span>
+</div>
+
+<!-- PWA 설치 배너 (Android Chrome에서 자동 표시) -->
+<div id="install-banner">
+  <p>홈 화면에 앱으로 추가하기</p>
+  <button id="install-btn">설치</button>
+</div>
+
+<div class="stage">
+  <div class="camera-frame" id="cameraFrame">
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+    <video id="webcam" autoplay playsinline muted></video>
+    <div class="reticle">
+      <div class="reticle-ring"></div>
+      <div class="reticle-dot"></div>
+    </div>
+    <div class="scan-line" id="scanLine"></div>
+    <div class="overlay-start" id="overlayStart">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="22" stroke="white" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <circle cx="24" cy="24" r="10" stroke="white" stroke-width="1.5"/>
+        <circle cx="24" cy="24" r="3" fill="white"/>
+      </svg>
+      <p>탭하여 시작</p>
+    </div>
+  </div>
+
+  <div class="info-panel">
+    <div class="color-display">
+      <div class="color-swatch" id="colorSwatch"></div>
+      <div class="color-info">
+        <div class="color-label">감지된 색상</div>
+        <div class="color-name-kr" id="colorName">—</div>
+        <div class="color-hex" id="colorHex">#——————</div>
+      </div>
+    </div>
+
+    <div class="rgb-bars">
+      <div class="bar-row bar-r">
+        <span class="bar-label">R</span>
+        <div class="bar-track"><div class="bar-fill" id="barR"></div></div>
+        <span class="bar-val" id="valR">—</span>
+      </div>
+      <div class="bar-row bar-g">
+        <span class="bar-label">G</span>
+        <div class="bar-track"><div class="bar-fill" id="barG"></div></div>
+        <span class="bar-val" id="valG">—</span>
+      </div>
+      <div class="bar-row bar-b">
+        <span class="bar-label">B</span>
+        <div class="bar-track"><div class="bar-fill" id="barB"></div></div>
+        <span class="bar-val" id="valB">—</span>
+      </div>
+    </div>
+
+    <div class="status-row">
+      <div class="status-dot" id="statusDot"></div>
+      <span class="status-text" id="statusText">대기 중</span>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="btn-action" id="btnSound" onclick="toggleSound()">
+        <span class="btn-icon" id="soundIcon">🔇</span>
+        <span id="soundLabel">음성 끄기</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<canvas id="canvas" style="display:none"></canvas>
+
+<script>
+// ── Service Worker 등록 ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+// ── PWA 설치 배너 ──
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-banner').style.display = 'flex';
+});
+document.getElementById('install-btn').addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('install-banner').style.display = 'none';
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-banner').style.display = 'none';
+});
+
+// ── 카메라 & 색상 감지 ──
+const video = document.getElementById('webcam');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', { willReadFrequently: true });
+const overlayStart = document.getElementById('overlayStart');
+const scanLine = document.getElementById('scanLine');
+const statusDot = document.getElementById('statusDot');
+const statusText = document.getElementById('statusText');
+
+let isRunning = false;
+let soundOn = true;
+let prevColorName = '';
+
+overlayStart.addEventListener('click', startCamera);
+
+async function startCamera() {
+  // 모바일 음성 잠금 해제 (사용자 탭 이벤트 시 반드시 호출)
+  try {
+    window.speechSynthesis.cancel();
+    const unlock = new SpeechSynthesisUtterance(' ');
+    unlock.volume = 0;
+    unlock.lang = 'ko-KR';
+    window.speechSynthesis.speak(unlock);
+  } catch(e) {}
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 640 } }
+    });
+    video.srcObject = stream;
+    video.addEventListener('loadeddata', () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      overlayStart.style.opacity = '0';
+      setTimeout(() => overlayStart.style.display = 'none', 300);
+      scanLine.style.display = 'block';
+      statusDot.classList.add('active');
+      statusText.textContent = '감지 중';
+      isRunning = true;
+      setInterval(analyzeColor, 800);
+    });
+  } catch (e) {
+    statusText.textContent = '카메라 권한 필요';
+    alert('카메라 접근 권한이 필요합니다.');
+  }
+}
+
+function analyzeColor() {
+  if (!isRunning) return;
+  const cx = Math.floor(canvas.width / 2);
+  const cy = Math.floor(canvas.height / 2);
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  const sample = 8;
+  let rSum = 0, gSum = 0, bSum = 0, count = 0;
+  for (let dx = -sample; dx <= sample; dx += 4) {
+    for (let dy = -sample; dy <= sample; dy += 4) {
+      const px = ctx.getImageData(cx + dx, cy + dy, 1, 1).data;
+      rSum += px[0]; gSum += px[1]; bSum += px[2]; count++;
+    }
+  }
+  const r = Math.round(rSum / count);
+  const g = Math.round(gSum / count);
+  const b = Math.round(bSum / count);
+  updateUI(r, g, b);
+}
+
+function updateUI(r, g, b) {
+  const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase();
+  const name = getColorName(r, g, b);
+
+  document.getElementById('colorSwatch').style.backgroundColor = `rgb(${r},${g},${b})`;
+  document.getElementById('colorName').textContent = name;
+  document.getElementById('colorHex').textContent = hex;
+  document.getElementById('barR').style.width = (r / 255 * 100) + '%';
+  document.getElementById('barG').style.width = (g / 255 * 100) + '%';
+  document.getElementById('barB').style.width = (b / 255 * 100) + '%';
+  document.getElementById('valR').textContent = r;
+  document.getElementById('valG').textContent = g;
+  document.getElementById('valB').textContent = b;
+
+  if (soundOn && name !== prevColorName && name !== '알수없음') {
+    speak(name);
+    prevColorName = name;
+  }
+}
+
+function getColorName(r, g, b) {
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const delta = max - min;
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  const saturation = max === 0 ? 0 : delta / max;
+
+  if (brightness < 40) return '검정';
+  if (brightness > 220 && saturation < 0.15) return '흰색';
+  if (saturation < 0.15) {
+    if (brightness < 85) return '진회색';
+    if (brightness < 160) return '회색';
+    return '밝은회색';
+  }
+
+  let hue = 0;
+  if (max === r) hue = ((g - b) / delta) % 6;
+  else if (max === g) hue = (b - r) / delta + 2;
+  else hue = (r - g) / delta + 4;
+  hue = Math.round(hue * 60);
+  if (hue < 0) hue += 360;
+
+  if (hue < 15 || hue >= 345) return '빨간색';
+  if (hue < 40) return '주황색';
+  if (hue < 70) return '노란색';
+  if (hue < 80) return '연두색';
+  if (hue < 160) return '초록색';
+  if (hue < 195) return '청록색';
+  if (hue < 255) return '파란색';
+  if (hue < 285) return '남색';
+  if (hue < 320) return '보라색';
+  if (hue < 345) return '분홍색';
+  return '알수없음';
+}
+
+function speak(text) {
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ko-KR';
+  u.rate = 0.95;
+  window.speechSynthesis.speak(u);
+}
+
+function toggleSound() {
+  soundOn = !soundOn;
+  document.getElementById('soundIcon').textContent = soundOn ? '🔊' : '🔇';
+  document.getElementById('soundLabel').textContent = soundOn ? '음성 켜짐' : '음성 끄기';
+  document.getElementById('btnSound').classList.toggle('on', soundOn);
+}
+</script>
+</body>
+</html>
