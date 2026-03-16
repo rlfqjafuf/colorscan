@@ -69,18 +69,10 @@
   .overlay-start {
     position: absolute; inset: 0;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: rgba(245,240,235,0.95); z-index: 20; gap: 14px; transition: opacity 0.3s;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    user-select: none; -webkit-user-select: none;
+    background: rgba(245,240,235,0.92); cursor: pointer; z-index: 20; gap: 14px; transition: opacity 0.3s;
   }
-  .start-icon {
-    width:80px; height:80px; background:var(--accent); border-radius:50%;
-    display:flex; align-items:center; justify-content:center; font-size:34px;
-    cursor:pointer; pointer-events:all;
-    box-shadow: 0 4px 20px rgba(255,107,53,0.35);
-  }
-  .overlay-start p { font-size:14px; color:var(--muted); font-weight:500; pointer-events:none; }
+  .start-icon { width:64px; height:64px; background:var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:28px; }
+  .overlay-start p { font-size:14px; color:var(--muted); font-weight:500; }
 
   .color-result { padding: 16px; display: flex; align-items: center; gap: 14px; }
   .color-swatch { width:72px; height:72px; border-radius:18px; background:#e8e0d8; border:1px solid var(--border); transition:background-color 0.4s ease; flex-shrink:0; }
@@ -215,7 +207,7 @@
       </div>
       <div class="flash-overlay" id="flashOverlay"></div>
       <div class="overlay-start" id="overlayStart">
-        <div class="start-icon" id="startIcon">📷</div>
+        <div class="start-icon">📷</div>
         <p>탭하여 카메라 시작</p>
       </div>
     </div>
@@ -289,22 +281,14 @@ const overlayStart = document.getElementById('overlayStart');
 const captureBtn = document.getElementById('captureBtn');
 
 let isRunning = false;
-let soundOn = true;
+let soundOn = false; // ✅ 에러 수정됨: 초기 음성 상태를 false로 맞춤
 let prevColorName = '';
 let currentR = 0, currentG = 0, currentB = 0;
 let currentColorName = '—';
 let currentHex = '#000000';
 let photos = [];
-let started = false;
 
-function handleStart(e) {
-  e.preventDefault();
-  if (started) return;
-  started = true;
-  startCamera();
-}
-overlayStart.addEventListener('click', handleStart);
-overlayStart.addEventListener('touchend', handleStart, { passive: false });
+overlayStart.addEventListener('click', startCamera);
 
 async function startCamera() {
   const startBtn = document.querySelector('.overlay-start p');
@@ -727,10 +711,12 @@ async function toggleTorch() {
   }
 }
 
-
+// ✅ 에러 수정됨: 함수 선언 누락 문제 해결
+function speak(text) {
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ko-KR'; u.rate = 0.95;
+  u.lang = 'ko-KR'; 
+  u.rate = 0.95;
   window.speechSynthesis.speak(u);
 }
 
