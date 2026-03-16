@@ -291,14 +291,28 @@ let photos = [];
 overlayStart.addEventListener('click', startCamera);
 
 async function startCamera() {
+  const startBtn = document.querySelector('.overlay-start p');
+  startBtn.textContent = '카메라 연결 중...';
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showCameraError('이 브라우저는 카메라를 지원하지 않아요.\n크롬 최신 버전을 사용해 주세요.');
+    return;
+  }
+
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 640 } }
-    });
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 640 } }
+      });
+    } catch(e) {
+      stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    }
+
     video.srcObject = stream;
     video.addEventListener('loadeddata', () => {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 640;
       overlayStart.style.opacity = '0';
       setTimeout(() => overlayStart.style.display = 'none', 300);
       document.getElementById('statusDot').classList.add('active');
@@ -308,10 +322,33 @@ async function startCamera() {
       isRunning = true;
       setInterval(analyzeColor, 800);
     });
+
+    video.addEventListener('error', () => {
+      showCameraError('영상 로딩 중 오류가 발생했어요. 다시 시도해 주세요.');
+    });
+
   } catch(e) {
-    document.getElementById('statusText').textContent = '카메라 권한 필요';
-    alert('카메라 접근 권한이 필요합니다.');
+    if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+      showCameraError('카메라 권한을 허용해 주세요!\n\n브라우저 주소창 왼쪽 🔒 아이콘 → 카메라 → 허용');
+    } else if (e.name === 'NotFoundError') {
+      showCameraError('카메라를 찾을 수 없어요.\n카메라가 연결되어 있는지 확인해 주세요.');
+    } else if (e.name === 'NotReadableError') {
+      showCameraError('카메라가 다른 앱에서 사용 중이에요.\n다른 앱을 닫고 다시 시도해 주세요.');
+    } else {
+      showCameraError(`카메라 오류: ${e.name}\n${e.message}`);
+    }
   }
+}
+
+function showCameraError(msg) {
+  const overlay = document.getElementById('overlayStart');
+  overlay.innerHTML = `
+    <div style="padding:20px;text-align:center;">
+      <div style="font-size:36px;margin-bottom:12px;">⚠️</div>
+      <p style="font-size:13px;color:#e74c4c;font-weight:600;line-height:1.6;white-space:pre-line;">${msg}</p>
+      <button onclick="location.reload()" style="margin-top:16px;padding:10px 24px;background:#ff6b35;color:white;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;">다시 시도</button>
+    </div>
+  `;
 }
 
 function analyzeColor() {
