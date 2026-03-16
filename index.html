@@ -66,13 +66,23 @@
   .flash-overlay { position:absolute; inset:0; background:white; opacity:0; pointer-events:none; z-index:15; transition:opacity 0.05s; }
   .flash-overlay.flash { opacity:1; }
 
+  /* ✅ 핵심 수정: 터치 최적화 */
   .overlay-start {
     position: absolute; inset: 0;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: rgba(245,240,235,0.92); cursor: pointer; z-index: 20; gap: 14px; transition: opacity 0.3s;
+    background: rgba(245,240,235,0.95);
+    z-index: 20; gap: 14px; transition: opacity 0.3s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    cursor: pointer;
   }
-  .start-icon { width:64px; height:64px; background:var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:28px; }
-  .overlay-start p { font-size:14px; color:var(--muted); font-weight:500; }
+  .overlay-start:active { opacity: 0.8; }
+  .start-icon {
+    width: 80px; height: 80px; background: var(--accent); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 32px;
+    pointer-events: none;
+  }
+  .overlay-start p { font-size: 14px; color: var(--muted); font-weight: 600; pointer-events: none; }
 
   .color-result { padding: 16px; display: flex; align-items: center; gap: 14px; }
   .color-swatch { width:72px; height:72px; border-radius:18px; background:#e8e0d8; border:1px solid var(--border); transition:background-color 0.4s ease; flex-shrink:0; }
@@ -99,46 +109,24 @@
   .status-dot.active { background:#2ecc71; animation:blink 1.5s ease-in-out infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
   .status-text { font-size:12px; color:var(--muted); font-weight:500; }
-  .btn-sound { display:flex; align-items:center; gap:6px; background:#f5f0eb; border:1px solid var(--border); color:var(--muted); padding:6px 12px; font-size:12px; font-family:'Noto Sans KR',sans-serif; font-weight:500; cursor:pointer; border-radius:20px; transition:all 0.2s; }
-  .btn-sound:hover { background:#ede8e2; color:var(--text); }
+  .btn-sound { display:flex; align-items:center; gap:6px; background:#f5f0eb; border:1px solid var(--border); color:var(--muted); padding:6px 12px; font-size:12px; font-family:'Noto Sans KR',sans-serif; font-weight:500; cursor:pointer; border-radius:20px; transition:all 0.2s; touch-action:manipulation; }
   .btn-sound.on { background:#fff3ee; border-color:#ffcfbc; color:var(--accent); }
 
   .capture-btn-wrap { padding: 0 16px 16px; display: flex; gap: 10px; }
   .capture-btn {
-    flex: 1;
-    padding: 14px;
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 16px;
-    font-size: 15px;
-    font-weight: 700;
-    font-family: 'Nunito', sans-serif;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: background 0.2s, transform 0.1s;
+    flex: 1; padding: 14px; background: var(--accent); color: white; border: none;
+    border-radius: 16px; font-size: 15px; font-weight: 700; font-family: 'Nunito', sans-serif;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background 0.2s, transform 0.1s; touch-action: manipulation;
   }
-  .capture-btn:hover { background: #e85a25; }
-  .capture-btn:active { transform: scale(0.98); }
+  .capture-btn:active { transform: scale(0.98); background: #e85a25; }
   .capture-btn:disabled { background: #ccc; cursor: not-allowed; }
   .torch-btn {
-    width: 54px;
-    height: 54px;
-    background: #f5f0eb;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    font-size: 22px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    flex-shrink: 0;
+    width: 54px; height: 54px; background: #f5f0eb; border: 1px solid var(--border);
+    border-radius: 16px; font-size: 22px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; transition: all 0.2s;
+    flex-shrink: 0; touch-action: manipulation;
   }
-  .torch-btn:hover { background: #ede8e2; }
   .torch-btn.on { background: #fff9e6; border-color: #ffd166; }
   .torch-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -149,13 +137,7 @@
   .gallery-empty { padding:28px 16px; text-align:center; color:var(--muted); font-size:13px; }
   .gallery-grid { padding:12px; display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; }
 
-  .photo-card {
-    border-radius:14px;
-    overflow:hidden;
-    border:1px solid var(--border);
-    background: var(--surface);
-    position: relative;
-  }
+  .photo-card { border-radius:14px; overflow:hidden; border:1px solid var(--border); background: var(--surface); }
   .photo-img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; }
   .photo-info { padding:8px 10px; }
   .photo-color-row { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
@@ -168,10 +150,8 @@
   .btn-download, .btn-delete {
     flex:1; padding:5px; font-size:11px; border-radius:8px; border:1px solid var(--border);
     cursor:pointer; font-family:'Noto Sans KR',sans-serif; font-weight:500; transition:all 0.15s;
-    background: #f5f0eb; color: var(--muted);
+    background: #f5f0eb; color: var(--muted); touch-action: manipulation;
   }
-  .btn-download:hover { background:#fff3ee; border-color:#ffcfbc; color:var(--accent); }
-  .btn-delete:hover { background:#fff0f0; border-color:#ffcfbc; color:#e74c4c; }
 
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
@@ -225,7 +205,7 @@
       <button class="capture-btn" id="captureBtn" onclick="capturePhoto()" disabled>
         <span>📸</span> 사진 찍기
       </button>
-      <button class="torch-btn" id="torchBtn" onclick="toggleTorch()" disabled title="손전등">🔦</button>
+      <button class="torch-btn" id="torchBtn" onclick="toggleTorch()" disabled>🔦</button>
     </div>
   </div>
 
@@ -260,7 +240,7 @@
     </div>
   </div>
 
-  <div class="gallery-section" id="gallerySection">
+  <div class="gallery-section">
     <div class="gallery-header">
       <span class="gallery-title">📁 저장된 사진</span>
       <span class="gallery-count" id="galleryCount">0장</span>
@@ -281,21 +261,31 @@ const overlayStart = document.getElementById('overlayStart');
 const captureBtn = document.getElementById('captureBtn');
 
 let isRunning = false;
-let soundOn = false; // ✅ 에러 수정됨: 초기 음성 상태를 false로 맞춤
+let soundOn = false;
 let prevColorName = '';
 let currentR = 0, currentG = 0, currentB = 0;
 let currentColorName = '—';
 let currentHex = '#000000';
 let photos = [];
+let cameraStarted = false;
 
-overlayStart.addEventListener('click', startCamera);
+// ✅ 핵심 수정: click + touchend 둘 다 등록, 중복 실행 방지
+function tryStartCamera(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  if (cameraStarted) return;
+  cameraStarted = true;
+  startCamera();
+}
+overlayStart.addEventListener('click', tryStartCamera);
+overlayStart.addEventListener('touchend', tryStartCamera, { passive: false });
 
 async function startCamera() {
-  const startBtn = document.querySelector('.overlay-start p');
-  startBtn.textContent = '카메라 연결 중...';
+  document.querySelector('.overlay-start p').textContent = '카메라 연결 중...';
 
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     showCameraError('이 브라우저는 카메라를 지원하지 않아요.\n크롬 최신 버전을 사용해 주세요.');
+    cameraStarted = false;
     return;
   }
 
@@ -324,29 +314,32 @@ async function startCamera() {
     });
 
     video.addEventListener('error', () => {
-      showCameraError('영상 로딩 중 오류가 발생했어요. 다시 시도해 주세요.');
+      showCameraError('영상 로딩 중 오류가 발생했어요.\n다시 시도해 주세요.');
+      cameraStarted = false;
     });
 
   } catch(e) {
+    cameraStarted = false;
     if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
-      showCameraError('카메라 권한을 허용해 주세요!\n\n브라우저 주소창 왼쪽 🔒 아이콘 → 카메라 → 허용');
+      showCameraError('카메라 권한을 허용해 주세요!\n\n주소창 왼쪽 🔒 아이콘\n→ 카메라 → 허용\n→ 새로고침');
     } else if (e.name === 'NotFoundError') {
-      showCameraError('카메라를 찾을 수 없어요.\n카메라가 연결되어 있는지 확인해 주세요.');
+      showCameraError('카메라를 찾을 수 없어요.\n카메라가 있는지 확인해 주세요.');
     } else if (e.name === 'NotReadableError') {
       showCameraError('카메라가 다른 앱에서 사용 중이에요.\n다른 앱을 닫고 다시 시도해 주세요.');
     } else {
-      showCameraError(`카메라 오류: ${e.name}\n${e.message}`);
+      showCameraError(`카메라 오류\n${e.name}: ${e.message}`);
     }
   }
 }
 
 function showCameraError(msg) {
   const overlay = document.getElementById('overlayStart');
+  overlay.style.cursor = 'default';
   overlay.innerHTML = `
-    <div style="padding:20px;text-align:center;">
-      <div style="font-size:36px;margin-bottom:12px;">⚠️</div>
-      <p style="font-size:13px;color:#e74c4c;font-weight:600;line-height:1.6;white-space:pre-line;">${msg}</p>
-      <button onclick="location.reload()" style="margin-top:16px;padding:10px 24px;background:#ff6b35;color:white;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;">다시 시도</button>
+    <div style="padding:24px;text-align:center;">
+      <div style="font-size:40px;margin-bottom:12px;">⚠️</div>
+      <p style="font-size:13px;color:#e74c4c;font-weight:600;line-height:1.8;white-space:pre-line;">${msg}</p>
+      <button onclick="location.reload()" style="margin-top:18px;padding:12px 28px;background:#ff6b35;color:white;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;">다시 시도</button>
     </div>
   `;
 }
@@ -358,9 +351,8 @@ function analyzeColor() {
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
   let rSum = 0, gSum = 0, bSum = 0, count = 0;
-  const sample = 8;
-  for (let dx = -sample; dx <= sample; dx += 4) {
-    for (let dy = -sample; dy <= sample; dy += 4) {
+  for (let dx = -8; dx <= 8; dx += 4) {
+    for (let dy = -8; dy <= 8; dy += 4) {
       const px = ctx.getImageData(cx + dx, cy + dy, 1, 1).data;
       rSum += px[0]; gSum += px[1]; bSum += px[2]; count++;
     }
@@ -393,44 +385,32 @@ function updateUI(r, g, b) {
 
 function capturePhoto() {
   if (!isRunning) return;
-
-  const flash = document.getElementById('flashOverlay');
-  flash.classList.add('flash');
-  setTimeout(() => flash.classList.remove('flash'), 200);
+  document.getElementById('flashOverlay').classList.add('flash');
+  setTimeout(() => document.getElementById('flashOverlay').classList.remove('flash'), 200);
 
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  const captureCanvas = document.createElement('canvas');
-  captureCanvas.width = canvas.width;
-  captureCanvas.height = canvas.height;
-  const captureCtx = captureCanvas.getContext('2d');
-  captureCtx.drawImage(canvas, 0, 0);
-
+  const cc = document.createElement('canvas');
+  cc.width = canvas.width; cc.height = canvas.height;
+  const cctx = cc.getContext('2d');
+  cctx.drawImage(canvas, 0, 0);
   const cx = Math.floor(canvas.width / 2);
   const cy = Math.floor(canvas.height / 2);
-  captureCtx.strokeStyle = 'rgba(255,107,53,0.9)';
-  captureCtx.lineWidth = 3;
-  captureCtx.beginPath();
-  captureCtx.arc(cx, cy, 30, 0, Math.PI * 2);
-  captureCtx.stroke();
+  cctx.strokeStyle = 'rgba(255,107,53,0.9)';
+  cctx.lineWidth = 3;
+  cctx.beginPath();
+  cctx.arc(cx, cy, 30, 0, Math.PI * 2);
+  cctx.stroke();
 
-  const imageData = captureCanvas.toDataURL('image/jpeg', 0.92);
   const now = new Date();
-  const timeStr = now.toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-  const dateStr = now.toLocaleDateString('ko-KR', { month:'2-digit', day:'2-digit' });
-
-  const photo = {
+  photos.unshift({
     id: Date.now(),
-    image: imageData,
+    image: cc.toDataURL('image/jpeg', 0.92),
     colorName: currentColorName,
     hex: currentHex,
-    r: currentR,
-    g: currentG,
-    b: currentB,
-    time: `${dateStr} ${timeStr}`
-  };
-
-  photos.unshift(photo);
+    r: currentR, g: currentG, b: currentB,
+    time: now.toLocaleDateString('ko-KR', {month:'2-digit',day:'2-digit'}) + ' ' +
+          now.toLocaleTimeString('ko-KR', {hour:'2-digit',minute:'2-digit',second:'2-digit'})
+  });
   renderGallery();
   showToast(`📸 ${currentColorName} 저장 완료!`);
 }
@@ -438,20 +418,13 @@ function capturePhoto() {
 function renderGallery() {
   const grid = document.getElementById('galleryGrid');
   const empty = document.getElementById('galleryEmpty');
-  const count = document.getElementById('galleryCount');
-
-  count.textContent = `${photos.length}장`;
+  document.getElementById('galleryCount').textContent = `${photos.length}장`;
 
   if (photos.length === 0) {
-    empty.style.display = 'block';
-    grid.style.display = 'none';
-    return;
+    empty.style.display = 'block'; grid.style.display = 'none'; return;
   }
-
-  empty.style.display = 'none';
-  grid.style.display = 'grid';
+  empty.style.display = 'none'; grid.style.display = 'grid';
   grid.innerHTML = '';
-
   photos.forEach(photo => {
     const card = document.createElement('div');
     card.className = 'photo-card';
@@ -469,8 +442,7 @@ function renderGallery() {
           <button class="btn-download" onclick="downloadPhoto(${photo.id})">💾 저장</button>
           <button class="btn-delete" onclick="deletePhoto(${photo.id})">🗑 삭제</button>
         </div>
-      </div>
-    `;
+      </div>`;
     grid.appendChild(card);
   });
 }
@@ -478,44 +450,27 @@ function renderGallery() {
 function downloadPhoto(id) {
   const photo = photos.find(p => p.id === id);
   if (!photo) return;
-
-  const downloadCanvas = document.createElement('canvas');
+  const dc = document.createElement('canvas');
   const img = new Image();
   img.onload = () => {
-    const padding = 20;
-    const infoHeight = 100;
-    downloadCanvas.width = img.width;
-    downloadCanvas.height = img.height + infoHeight;
-    const dc = downloadCanvas.getContext('2d');
-
-    dc.fillStyle = '#ffffff';
-    dc.fillRect(0, 0, downloadCanvas.width, downloadCanvas.height);
-    dc.drawImage(img, 0, 0);
-
-    dc.fillStyle = '#f5f0eb';
-    dc.fillRect(0, img.height, downloadCanvas.width, infoHeight);
-
-    dc.fillStyle = photo.hex;
-    dc.roundRect(padding, img.height + 14, 60, 60, 12);
-    dc.fill();
-
-    dc.fillStyle = '#1a1a1a';
-    dc.font = `bold 22px 'Nunito', sans-serif`;
-    dc.fillText(photo.colorName, padding + 72, img.height + 36);
-
-    dc.fillStyle = '#999';
-    dc.font = `14px monospace`;
-    dc.fillText(`${photo.hex}  |  R:${photo.r}  G:${photo.g}  B:${photo.b}`, padding + 72, img.height + 58);
-
-    dc.fillStyle = '#bbb';
-    dc.font = `12px sans-serif`;
-    dc.fillText(photo.time, padding + 72, img.height + 78);
-
-    const link = document.createElement('a');
-    link.download = `colorscan_${photo.colorName}_${photo.hex.replace('#','')}.jpg`;
-    link.href = downloadCanvas.toDataURL('image/jpeg', 0.95);
-    link.click();
-    showToast('💾 이미지 저장 완료!');
+    const pad = 20, infoH = 100;
+    dc.width = img.width; dc.height = img.height + infoH;
+    const c = dc.getContext('2d');
+    c.fillStyle = '#ffffff'; c.fillRect(0, 0, dc.width, dc.height);
+    c.drawImage(img, 0, 0);
+    c.fillStyle = '#f5f0eb'; c.fillRect(0, img.height, dc.width, infoH);
+    c.fillStyle = photo.hex; c.roundRect(pad, img.height + 14, 60, 60, 12); c.fill();
+    c.fillStyle = '#1a1a1a'; c.font = `bold 22px sans-serif`;
+    c.fillText(photo.colorName, pad + 72, img.height + 38);
+    c.fillStyle = '#999'; c.font = `14px monospace`;
+    c.fillText(`${photo.hex}  R:${photo.r} G:${photo.g} B:${photo.b}`, pad + 72, img.height + 60);
+    c.fillStyle = '#bbb'; c.font = `12px sans-serif`;
+    c.fillText(photo.time, pad + 72, img.height + 80);
+    const a = document.createElement('a');
+    a.download = `colorscan_${photo.colorName}_${photo.hex.replace('#','')}.jpg`;
+    a.href = dc.toDataURL('image/jpeg', 0.95);
+    a.click();
+    showToast('💾 저장 완료!');
   };
   img.src = photo.image;
 }
@@ -523,14 +478,14 @@ function downloadPhoto(id) {
 function deletePhoto(id) {
   photos = photos.filter(p => p.id !== id);
   renderGallery();
-  showToast('🗑 사진 삭제됨');
+  showToast('🗑 삭제됨');
 }
 
 function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2000);
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
 }
 
 function getColorName(r, g, b) {
@@ -541,7 +496,6 @@ function getColorName(r, g, b) {
   const saturation = max === 0 ? 0 : delta / max;
   const lightness = (max + min) / 2 / 255;
 
-  // 무채색 계열
   if (brightness < 25) return '검정';
   if (brightness < 55) return '매우 어두운 회색';
   if (brightness > 245 && saturation < 0.06) return '흰색';
@@ -554,8 +508,6 @@ function getColorName(r, g, b) {
     if (brightness < 225) return '연회색';
     return '흰색에 가까운 회색';
   }
-
-  // 갈색/베이지 계열 (채도 낮은 따뜻한 색)
   if (saturation < 0.35 && r > g && r > b) {
     if (brightness < 60) return '짙은 갈색';
     if (brightness < 100) return '갈색';
@@ -565,7 +517,6 @@ function getColorName(r, g, b) {
     return '크림색';
   }
 
-  // 색조 계산 (HSV 방식)
   let hue = 0;
   if (max === r) hue = ((g - b) / delta) % 6;
   else if (max === g) hue = (b - r) / delta + 2;
@@ -577,132 +528,33 @@ function getColorName(r, g, b) {
   const isLight = lightness > 0.72;
   const isVibrant = saturation > 0.6;
 
-  // 빨강 계열 (0~15, 345~360)
-  if (hue < 8 || hue >= 352) {
-    if (isDark) return '다크 레드';
-    if (isLight) return '연분홍';
-    if (isVibrant) return '빨간색';
-    return '적색';
-  }
-
-  // 빨강~주황 (8~20)
-  if (hue < 20) {
-    if (isDark) return '다크 오렌지';
-    if (isLight) return '살구색';
-    return '주홍색';
-  }
-
-  // 주황 계열 (20~40)
-  if (hue < 40) {
-    if (isDark) return '진한 주황';
-    if (isLight) return '복숭아색';
-    if (isVibrant) return '주황색';
-    return '오렌지';
-  }
-
-  // 주황~노랑 (40~55)
-  if (hue < 55) {
-    if (isDark) return '황토색';
-    if (isLight) return '연노랑';
-    return '황금색';
-  }
-
-  // 노랑 계열 (55~68)
-  if (hue < 68) {
-    if (isDark) return '올리브색';
-    if (isLight) return '밝은 노랑';
-    if (isVibrant) return '노란색';
-    return '노란색';
-  }
-
-  // 노랑~연두 (68~85)
-  if (hue < 85) {
-    if (isDark) return '올리브 그린';
-    if (isLight) return '연두색';
-    return '황록색';
-  }
-
-  // 연두~초록 (85~140)
-  if (hue < 140) {
-    if (isDark) return '짙은 초록';
-    if (isLight) return '민트그린';
-    if (isVibrant) return '초록색';
-    if (hue < 110) return '풀색';
-    return '초록색';
-  }
-
-  // 초록~청록 (140~175)
-  if (hue < 175) {
-    if (isDark) return '다크 그린';
-    if (isLight) return '연한 청록';
-    return '청록색';
-  }
-
-  // 청록~시안 (175~200)
-  if (hue < 200) {
-    if (isDark) return '짙은 청록';
-    if (isLight) return '하늘색';
-    if (isVibrant) return '시안';
-    return '청록색';
-  }
-
-  // 하늘~파랑 (200~230)
-  if (hue < 230) {
-    if (isDark) return '짙은 파랑';
-    if (isLight) return '하늘색';
-    if (isVibrant) return '파란색';
-    return '파란색';
-  }
-
-  // 파랑~남색 (230~255)
-  if (hue < 255) {
-    if (isDark) return '네이비';
-    if (isLight) return '연파랑';
-    if (isVibrant) return '코발트블루';
-    return '진파랑';
-  }
-
-  // 남색~보라 (255~285)
-  if (hue < 285) {
-    if (isDark) return '짙은 남색';
-    if (isLight) return '라벤더';
-    if (isVibrant) return '보라색';
-    return '남보라';
-  }
-
-  // 보라~자주 (285~320)
-  if (hue < 320) {
-    if (isDark) return '다크 퍼플';
-    if (isLight) return '연보라';
-    if (isVibrant) return '보라색';
-    return '자주색';
-  }
-
-  // 자주~분홍 (320~345)
-  if (hue < 345) {
-    if (isDark) return '와인색';
-    if (isLight) return '핑크';
-    if (isVibrant) return '마젠타';
-    return '분홍색';
-  }
-
+  if (hue < 8 || hue >= 352) { if (isDark) return '다크 레드'; if (isLight) return '연분홍'; if (isVibrant) return '빨간색'; return '적색'; }
+  if (hue < 20) { if (isDark) return '다크 오렌지'; if (isLight) return '살구색'; return '주홍색'; }
+  if (hue < 40) { if (isDark) return '진한 주황'; if (isLight) return '복숭아색'; if (isVibrant) return '주황색'; return '오렌지'; }
+  if (hue < 55) { if (isDark) return '황토색'; if (isLight) return '연노랑'; return '황금색'; }
+  if (hue < 68) { if (isDark) return '올리브색'; if (isLight) return '밝은 노랑'; return '노란색'; }
+  if (hue < 85) { if (isDark) return '올리브 그린'; if (isLight) return '연두색'; return '황록색'; }
+  if (hue < 140) { if (isDark) return '짙은 초록'; if (isLight) return '민트그린'; if (hue < 110) return '풀색'; return '초록색'; }
+  if (hue < 175) { if (isDark) return '다크 그린'; if (isLight) return '연한 청록'; return '청록색'; }
+  if (hue < 200) { if (isDark) return '짙은 청록'; if (isLight) return '하늘색'; if (isVibrant) return '시안'; return '청록색'; }
+  if (hue < 230) { if (isDark) return '짙은 파랑'; if (isLight) return '하늘색'; if (isVibrant) return '파란색'; return '파란색'; }
+  if (hue < 255) { if (isDark) return '네이비'; if (isLight) return '연파랑'; if (isVibrant) return '코발트블루'; return '진파랑'; }
+  if (hue < 285) { if (isDark) return '짙은 남색'; if (isLight) return '라벤더'; if (isVibrant) return '보라색'; return '남보라'; }
+  if (hue < 320) { if (isDark) return '다크 퍼플'; if (isLight) return '연보라'; if (isVibrant) return '보라색'; return '자주색'; }
+  if (hue < 345) { if (isDark) return '와인색'; if (isLight) return '핑크'; if (isVibrant) return '마젠타'; return '분홍색'; }
   return '알수없음';
 }
 
 let torchOn = false;
-
 async function toggleTorch() {
-  const btn = document.getElementById('torchBtn');
   try {
     const track = video.srcObject?.getVideoTracks()[0];
     if (!track) return;
     const capabilities = track.getCapabilities();
-    if (!capabilities.torch) {
-      showToast('이 기기는 손전등을 지원하지 않아요 😢');
-      return;
-    }
+    if (!capabilities.torch) { showToast('이 기기는 손전등을 지원하지 않아요 😢'); return; }
     torchOn = !torchOn;
     await track.applyConstraints({ advanced: [{ torch: torchOn }] });
+    const btn = document.getElementById('torchBtn');
     btn.classList.toggle('on', torchOn);
     btn.textContent = torchOn ? '💡' : '🔦';
     showToast(torchOn ? '💡 손전등 켜짐' : '🔦 손전등 꺼짐');
@@ -711,12 +563,10 @@ async function toggleTorch() {
   }
 }
 
-// ✅ 에러 수정됨: 함수 선언 누락 문제 해결
 function speak(text) {
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ko-KR'; 
-  u.rate = 0.95;
+  u.lang = 'ko-KR'; u.rate = 0.95;
   window.speechSynthesis.speak(u);
 }
 
