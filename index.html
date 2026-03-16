@@ -103,9 +103,9 @@
   .btn-sound:hover { background:#ede8e2; color:var(--text); }
   .btn-sound.on { background:#fff3ee; border-color:#ffcfbc; color:var(--accent); }
 
-  .capture-btn-wrap { padding: 0 16px 16px; }
+  .capture-btn-wrap { padding: 0 16px 16px; display: flex; gap: 10px; }
   .capture-btn {
-    width: 100%;
+    flex: 1;
     padding: 14px;
     background: var(--accent);
     color: white;
@@ -124,6 +124,23 @@
   .capture-btn:hover { background: #e85a25; }
   .capture-btn:active { transform: scale(0.98); }
   .capture-btn:disabled { background: #ccc; cursor: not-allowed; }
+  .torch-btn {
+    width: 54px;
+    height: 54px;
+    background: #f5f0eb;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .torch-btn:hover { background: #ede8e2; }
+  .torch-btn.on { background: #fff9e6; border-color: #ffd166; }
+  .torch-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .gallery-section { background:var(--surface); border-radius:20px; border:1px solid var(--border); overflow:hidden; }
   .gallery-header { padding:14px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
@@ -208,6 +225,7 @@
       <button class="capture-btn" id="captureBtn" onclick="capturePhoto()" disabled>
         <span>📸</span> 사진 찍기
       </button>
+      <button class="torch-btn" id="torchBtn" onclick="toggleTorch()" disabled title="손전등">🔦</button>
     </div>
   </div>
 
@@ -286,6 +304,7 @@ async function startCamera() {
       document.getElementById('statusDot').classList.add('active');
       document.getElementById('statusText').textContent = '감지 중';
       captureBtn.disabled = false;
+      document.getElementById('torchBtn').disabled = false;
       isRunning = true;
       setInterval(analyzeColor, 800);
     });
@@ -633,7 +652,29 @@ function getColorName(r, g, b) {
   return '알수없음';
 }
 
-function speak(text) {
+let torchOn = false;
+
+async function toggleTorch() {
+  const btn = document.getElementById('torchBtn');
+  try {
+    const track = video.srcObject?.getVideoTracks()[0];
+    if (!track) return;
+    const capabilities = track.getCapabilities();
+    if (!capabilities.torch) {
+      showToast('이 기기는 손전등을 지원하지 않아요 😢');
+      return;
+    }
+    torchOn = !torchOn;
+    await track.applyConstraints({ advanced: [{ torch: torchOn }] });
+    btn.classList.toggle('on', torchOn);
+    btn.textContent = torchOn ? '💡' : '🔦';
+    showToast(torchOn ? '💡 손전등 켜짐' : '🔦 손전등 꺼짐');
+  } catch(e) {
+    showToast('손전등 사용이 불가능해요 😢');
+  }
+}
+
+
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'ko-KR'; u.rate = 0.95;
