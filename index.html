@@ -9,12 +9,10 @@
   :root {
     --bg: #f5f0eb;
     --surface: #ffffff;
-    --surface2: #faf7f4;
     --border: rgba(0,0,0,0.08);
     --text: #1a1a1a;
     --muted: #999;
     --accent: #ff6b35;
-    --accent2: #ffd166;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -36,44 +34,13 @@
     align-items: center;
     justify-content: space-between;
   }
-  .header-left h1 {
-    font-family: 'Nunito', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--text);
-    line-height: 1;
-  }
-  .header-left p {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 3px;
-    font-weight: 300;
-  }
-  .header-badge {
-    background: var(--accent);
-    color: white;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-family: 'Nunito', sans-serif;
-    letter-spacing: 0.5px;
-  }
+  .header-left h1 { font-family: 'Nunito', sans-serif; font-size: 28px; font-weight: 800; line-height: 1; }
+  .header-left p { font-size: 12px; color: var(--muted); margin-top: 3px; font-weight: 300; }
+  .header-badge { background: var(--accent); color: white; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 20px; font-family: 'Nunito', sans-serif; }
 
-  .stage {
-    width: min(100vw, 420px);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
+  .stage { width: min(100vw, 420px); padding: 16px; display: flex; flex-direction: column; gap: 14px; }
 
-  .camera-card {
-    background: var(--surface);
-    border-radius: 24px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-  }
+  .camera-card { background: var(--surface); border-radius: 24px; overflow: hidden; border: 1px solid var(--border); }
 
   .camera-frame {
     position: relative;
@@ -82,240 +49,120 @@
     background: #e8e0d8;
     overflow: hidden;
   }
+  video { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-  video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
+  .reticle { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 5; }
+  .reticle-outer { width: 60px; height: 60px; border: 2px solid rgba(255,107,53,0.8); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+  .reticle-inner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; border: 1.5px solid rgba(255,107,53,0.6); border-radius: 50%; }
+  .reticle-dot { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
+  @keyframes pulse { 0%,100%{transform:scale(1);opacity:.9} 50%{transform:scale(1.08);opacity:.5} }
 
-  .reticle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 5;
-  }
-  .reticle-outer {
-    width: 60px;
-    height: 60px;
-    border: 2px solid rgba(255,107,53,0.8);
-    border-radius: 50%;
-    animation: pulse 2s ease-in-out infinite;
-  }
-  .reticle-inner {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 20px;
-    height: 20px;
-    border: 1.5px solid rgba(255,107,53,0.6);
-    border-radius: 50%;
-  }
-  .reticle-dot {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 5px;
-    height: 5px;
-    background: var(--accent);
-    border-radius: 50%;
-  }
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 0.9; }
-    50% { transform: scale(1.08); opacity: 0.5; }
-  }
+  .corner { position: absolute; width: 18px; height: 18px; z-index: 10; pointer-events: none; }
+  .corner-tl { top:14px; left:14px; border-top:2.5px solid var(--accent); border-left:2.5px solid var(--accent); border-radius:4px 0 0 0; }
+  .corner-tr { top:14px; right:14px; border-top:2.5px solid var(--accent); border-right:2.5px solid var(--accent); border-radius:0 4px 0 0; }
+  .corner-bl { bottom:14px; left:14px; border-bottom:2.5px solid var(--accent); border-left:2.5px solid var(--accent); border-radius:0 0 0 4px; }
+  .corner-br { bottom:14px; right:14px; border-bottom:2.5px solid var(--accent); border-right:2.5px solid var(--accent); border-radius:0 0 4px 0; }
 
-  .corner {
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    z-index: 10;
-    pointer-events: none;
-  }
-  .corner-tl { top: 14px; left: 14px; border-top: 2.5px solid var(--accent); border-left: 2.5px solid var(--accent); border-radius: 4px 0 0 0; }
-  .corner-tr { top: 14px; right: 14px; border-top: 2.5px solid var(--accent); border-right: 2.5px solid var(--accent); border-radius: 0 4px 0 0; }
-  .corner-bl { bottom: 14px; left: 14px; border-bottom: 2.5px solid var(--accent); border-left: 2.5px solid var(--accent); border-radius: 0 0 0 4px; }
-  .corner-br { bottom: 14px; right: 14px; border-bottom: 2.5px solid var(--accent); border-right: 2.5px solid var(--accent); border-radius: 0 0 4px 0; }
+  .flash-overlay { position:absolute; inset:0; background:white; opacity:0; pointer-events:none; z-index:15; transition:opacity 0.05s; }
+  .flash-overlay.flash { opacity:1; }
 
   .overlay-start {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: rgba(245,240,235,0.92);
-    cursor: pointer;
-    z-index: 20;
-    gap: 14px;
-    transition: opacity 0.3s;
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: rgba(245,240,235,0.92); cursor: pointer; z-index: 20; gap: 14px; transition: opacity 0.3s;
   }
-  .start-icon {
-    width: 64px;
-    height: 64px;
+  .start-icon { width:64px; height:64px; background:var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:28px; }
+  .overlay-start p { font-size:14px; color:var(--muted); font-weight:500; }
+
+  .color-result { padding: 16px; display: flex; align-items: center; gap: 14px; }
+  .color-swatch { width:72px; height:72px; border-radius:18px; background:#e8e0d8; border:1px solid var(--border); transition:background-color 0.4s ease; flex-shrink:0; }
+  .color-label { font-size:11px; color:var(--muted); font-weight:500; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px; }
+  .color-name-kr { font-family:'Nunito',sans-serif; font-size:28px; font-weight:800; line-height:1; transition:color 0.3s; }
+  .color-hex { font-size:12px; color:var(--muted); font-family:monospace; margin-top:5px; }
+
+  .info-card { background:var(--surface); border-radius:20px; border:1px solid var(--border); overflow:hidden; }
+
+  .rgb-section { padding:14px 16px; border-bottom:1px solid var(--border); }
+  .rgb-title { font-size:11px; color:var(--muted); font-weight:500; letter-spacing:1px; text-transform:uppercase; margin-bottom:10px; }
+  .bar-row { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+  .bar-row:last-child { margin-bottom:0; }
+  .bar-label { font-size:12px; font-weight:700; font-family:'Nunito',sans-serif; width:14px; }
+  .bar-label.r { color:#e74c4c; } .bar-label.g { color:#27ae60; } .bar-label.b { color:#2980b9; }
+  .bar-track { flex:1; height:6px; background:#f0ebe4; border-radius:3px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:3px; transition:width 0.4s ease; width:0%; }
+  .fill-r { background:#e74c4c; } .fill-g { background:#27ae60; } .fill-b { background:#2980b9; }
+  .bar-val { font-size:11px; color:var(--muted); font-family:monospace; width:28px; text-align:right; }
+
+  .bottom-row { padding:12px 16px; display:flex; align-items:center; justify-content:space-between; }
+  .status-row { display:flex; align-items:center; gap:7px; }
+  .status-dot { width:7px; height:7px; border-radius:50%; background:#ddd; }
+  .status-dot.active { background:#2ecc71; animation:blink 1.5s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .status-text { font-size:12px; color:var(--muted); font-weight:500; }
+  .btn-sound { display:flex; align-items:center; gap:6px; background:#f5f0eb; border:1px solid var(--border); color:var(--muted); padding:6px 12px; font-size:12px; font-family:'Noto Sans KR',sans-serif; font-weight:500; cursor:pointer; border-radius:20px; transition:all 0.2s; }
+  .btn-sound:hover { background:#ede8e2; color:var(--text); }
+  .btn-sound.on { background:#fff3ee; border-color:#ffcfbc; color:var(--accent); }
+
+  .capture-btn-wrap { padding: 0 16px 16px; }
+  .capture-btn {
+    width: 100%;
+    padding: 14px;
     background: var(--accent);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-  }
-  .overlay-start p {
-    font-size: 14px;
-    color: var(--muted);
-    font-weight: 500;
-  }
-
-  .color-result {
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .color-swatch {
-    width: 72px;
-    height: 72px;
-    border-radius: 18px;
-    background: #e8e0d8;
-    border: 1px solid var(--border);
-    transition: background-color 0.4s ease;
-    flex-shrink: 0;
-  }
-  .color-text { flex: 1; }
-  .color-label {
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .color-name-kr {
-    font-family: 'Nunito', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--text);
-    line-height: 1;
-    transition: color 0.3s;
-  }
-  .color-hex {
-    font-size: 12px;
-    color: var(--muted);
-    font-family: monospace;
-    margin-top: 5px;
-  }
-
-  .info-card {
-    background: var(--surface);
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    overflow: hidden;
-  }
-
-  .rgb-section {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .rgb-title {
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .bar-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 6px;
-  }
-  .bar-row:last-child { margin-bottom: 0; }
-  .bar-label {
-    font-size: 12px;
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 15px;
     font-weight: 700;
     font-family: 'Nunito', sans-serif;
-    width: 14px;
-  }
-  .bar-label.r { color: #e74c4c; }
-  .bar-label.g { color: #27ae60; }
-  .bar-label.b { color: #2980b9; }
-  .bar-track {
-    flex: 1;
-    height: 6px;
-    background: #f0ebe4;
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .bar-fill {
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.4s ease;
-    width: 0%;
-  }
-  .fill-r { background: #e74c4c; }
-  .fill-g { background: #27ae60; }
-  .fill-b { background: #2980b9; }
-  .bar-val {
-    font-size: 11px;
-    color: var(--muted);
-    font-family: monospace;
-    width: 28px;
-    text-align: right;
-  }
-
-  .bottom-row {
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .status-row {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-  .status-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #ddd;
-  }
-  .status-dot.active {
-    background: #2ecc71;
-    animation: blink 1.5s ease-in-out infinite;
-  }
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-  .status-text {
-    font-size: 12px;
-    color: var(--muted);
-    font-weight: 500;
-  }
-  .btn-sound {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: #f5f0eb;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    padding: 6px 12px;
-    font-size: 12px;
-    font-family: 'Noto Sans KR', sans-serif;
-    font-weight: 500;
     cursor: pointer;
-    border-radius: 20px;
-    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s, transform 0.1s;
   }
-  .btn-sound:hover { background: #ede8e2; color: var(--text); }
-  .btn-sound.on { background: #fff3ee; border-color: #ffcfbc; color: var(--accent); }
+  .capture-btn:hover { background: #e85a25; }
+  .capture-btn:active { transform: scale(0.98); }
+  .capture-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+  .gallery-section { background:var(--surface); border-radius:20px; border:1px solid var(--border); overflow:hidden; }
+  .gallery-header { padding:14px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .gallery-title { font-size:13px; font-weight:700; font-family:'Nunito',sans-serif; }
+  .gallery-count { font-size:11px; color:var(--muted); background:#f5f0eb; padding:3px 8px; border-radius:10px; }
+  .gallery-empty { padding:28px 16px; text-align:center; color:var(--muted); font-size:13px; }
+  .gallery-grid { padding:12px; display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; }
+
+  .photo-card {
+    border-radius:14px;
+    overflow:hidden;
+    border:1px solid var(--border);
+    background: var(--surface);
+    position: relative;
+  }
+  .photo-img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; }
+  .photo-info { padding:8px 10px; }
+  .photo-color-row { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+  .photo-swatch { width:16px; height:16px; border-radius:4px; flex-shrink:0; border:1px solid var(--border); }
+  .photo-color-name { font-size:12px; font-weight:700; font-family:'Nunito',sans-serif; }
+  .photo-hex { font-size:10px; color:var(--muted); font-family:monospace; }
+  .photo-rgb { font-size:10px; color:var(--muted); margin-top:2px; }
+  .photo-time { font-size:10px; color:var(--muted); margin-top:3px; }
+  .photo-actions { display:flex; gap:5px; margin-top:7px; }
+  .btn-download, .btn-delete {
+    flex:1; padding:5px; font-size:11px; border-radius:8px; border:1px solid var(--border);
+    cursor:pointer; font-family:'Noto Sans KR',sans-serif; font-weight:500; transition:all 0.15s;
+    background: #f5f0eb; color: var(--muted);
+  }
+  .btn-download:hover { background:#fff3ee; border-color:#ffcfbc; color:var(--accent); }
+  .btn-delete:hover { background:#fff0f0; border-color:#ffcfbc; color:#e74c4c; }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1a1a1a; color: white; padding: 10px 20px; border-radius: 20px;
+    font-size: 13px; font-weight: 500; opacity: 0; transition: all 0.3s; z-index: 100;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -341,11 +188,13 @@
         <div class="reticle-inner"></div>
         <div class="reticle-dot"></div>
       </div>
+      <div class="flash-overlay" id="flashOverlay"></div>
       <div class="overlay-start" id="overlayStart">
         <div class="start-icon">📷</div>
         <p>탭하여 카메라 시작</p>
       </div>
     </div>
+
     <div class="color-result">
       <div class="color-swatch" id="colorSwatch"></div>
       <div class="color-text">
@@ -353,6 +202,12 @@
         <div class="color-name-kr" id="colorName">—</div>
         <div class="color-hex" id="colorHex">#——————</div>
       </div>
+    </div>
+
+    <div class="capture-btn-wrap">
+      <button class="capture-btn" id="captureBtn" onclick="capturePhoto()" disabled>
+        <span>📸</span> 사진 찍기
+      </button>
     </div>
   </div>
 
@@ -386,8 +241,18 @@
       </button>
     </div>
   </div>
+
+  <div class="gallery-section" id="gallerySection">
+    <div class="gallery-header">
+      <span class="gallery-title">📁 저장된 사진</span>
+      <span class="gallery-count" id="galleryCount">0장</span>
+    </div>
+    <div class="gallery-empty" id="galleryEmpty">아직 저장된 사진이 없어요<br>사진을 찍어보세요! 📸</div>
+    <div class="gallery-grid" id="galleryGrid" style="display:none;"></div>
+  </div>
 </div>
 
+<div class="toast" id="toast"></div>
 <canvas id="canvas" style="display:none"></canvas>
 
 <script>
@@ -395,10 +260,15 @@ const video = document.getElementById('webcam');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d', { willReadFrequently: true });
 const overlayStart = document.getElementById('overlayStart');
+const captureBtn = document.getElementById('captureBtn');
 
 let isRunning = false;
 let soundOn = true;
 let prevColorName = '';
+let currentR = 0, currentG = 0, currentB = 0;
+let currentColorName = '—';
+let currentHex = '#000000';
+let photos = [];
 
 overlayStart.addEventListener('click', startCamera);
 
@@ -415,6 +285,7 @@ async function startCamera() {
       setTimeout(() => overlayStart.style.display = 'none', 300);
       document.getElementById('statusDot').classList.add('active');
       document.getElementById('statusText').textContent = '감지 중';
+      captureBtn.disabled = false;
       isRunning = true;
       setInterval(analyzeColor, 800);
     });
@@ -438,19 +309,19 @@ function analyzeColor() {
       rSum += px[0]; gSum += px[1]; bSum += px[2]; count++;
     }
   }
-  const r = Math.round(rSum / count);
-  const g = Math.round(gSum / count);
-  const b = Math.round(bSum / count);
-  updateUI(r, g, b);
+  currentR = Math.round(rSum / count);
+  currentG = Math.round(gSum / count);
+  currentB = Math.round(bSum / count);
+  updateUI(currentR, currentG, currentB);
 }
 
 function updateUI(r, g, b) {
-  const hex = '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('').toUpperCase();
-  const name = getColorName(r, g, b);
+  currentHex = '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('').toUpperCase();
+  currentColorName = getColorName(r, g, b);
 
   document.getElementById('colorSwatch').style.backgroundColor = `rgb(${r},${g},${b})`;
-  document.getElementById('colorName').textContent = name;
-  document.getElementById('colorHex').textContent = hex;
+  document.getElementById('colorName').textContent = currentColorName;
+  document.getElementById('colorHex').textContent = currentHex;
   document.getElementById('barR').style.width = (r/255*100) + '%';
   document.getElementById('barG').style.width = (g/255*100) + '%';
   document.getElementById('barB').style.width = (b/255*100) + '%';
@@ -458,10 +329,152 @@ function updateUI(r, g, b) {
   document.getElementById('valG').textContent = g;
   document.getElementById('valB').textContent = b;
 
-  if (soundOn && name !== prevColorName && name !== '알수없음') {
-    speak(name);
-    prevColorName = name;
+  if (soundOn && currentColorName !== prevColorName && currentColorName !== '알수없음') {
+    speak(currentColorName);
+    prevColorName = currentColorName;
   }
+}
+
+function capturePhoto() {
+  if (!isRunning) return;
+
+  const flash = document.getElementById('flashOverlay');
+  flash.classList.add('flash');
+  setTimeout(() => flash.classList.remove('flash'), 200);
+
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  const captureCanvas = document.createElement('canvas');
+  captureCanvas.width = canvas.width;
+  captureCanvas.height = canvas.height;
+  const captureCtx = captureCanvas.getContext('2d');
+  captureCtx.drawImage(canvas, 0, 0);
+
+  const cx = Math.floor(canvas.width / 2);
+  const cy = Math.floor(canvas.height / 2);
+  captureCtx.strokeStyle = 'rgba(255,107,53,0.9)';
+  captureCtx.lineWidth = 3;
+  captureCtx.beginPath();
+  captureCtx.arc(cx, cy, 30, 0, Math.PI * 2);
+  captureCtx.stroke();
+
+  const imageData = captureCanvas.toDataURL('image/jpeg', 0.92);
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  const dateStr = now.toLocaleDateString('ko-KR', { month:'2-digit', day:'2-digit' });
+
+  const photo = {
+    id: Date.now(),
+    image: imageData,
+    colorName: currentColorName,
+    hex: currentHex,
+    r: currentR,
+    g: currentG,
+    b: currentB,
+    time: `${dateStr} ${timeStr}`
+  };
+
+  photos.unshift(photo);
+  renderGallery();
+  showToast(`📸 ${currentColorName} 저장 완료!`);
+}
+
+function renderGallery() {
+  const grid = document.getElementById('galleryGrid');
+  const empty = document.getElementById('galleryEmpty');
+  const count = document.getElementById('galleryCount');
+
+  count.textContent = `${photos.length}장`;
+
+  if (photos.length === 0) {
+    empty.style.display = 'block';
+    grid.style.display = 'none';
+    return;
+  }
+
+  empty.style.display = 'none';
+  grid.style.display = 'grid';
+  grid.innerHTML = '';
+
+  photos.forEach(photo => {
+    const card = document.createElement('div');
+    card.className = 'photo-card';
+    card.innerHTML = `
+      <img class="photo-img" src="${photo.image}" alt="촬영 사진">
+      <div class="photo-info">
+        <div class="photo-color-row">
+          <div class="photo-swatch" style="background:${photo.hex}"></div>
+          <span class="photo-color-name">${photo.colorName}</span>
+        </div>
+        <div class="photo-hex">${photo.hex}</div>
+        <div class="photo-rgb">R:${photo.r} G:${photo.g} B:${photo.b}</div>
+        <div class="photo-time">${photo.time}</div>
+        <div class="photo-actions">
+          <button class="btn-download" onclick="downloadPhoto(${photo.id})">💾 저장</button>
+          <button class="btn-delete" onclick="deletePhoto(${photo.id})">🗑 삭제</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function downloadPhoto(id) {
+  const photo = photos.find(p => p.id === id);
+  if (!photo) return;
+
+  const downloadCanvas = document.createElement('canvas');
+  const img = new Image();
+  img.onload = () => {
+    const padding = 20;
+    const infoHeight = 100;
+    downloadCanvas.width = img.width;
+    downloadCanvas.height = img.height + infoHeight;
+    const dc = downloadCanvas.getContext('2d');
+
+    dc.fillStyle = '#ffffff';
+    dc.fillRect(0, 0, downloadCanvas.width, downloadCanvas.height);
+    dc.drawImage(img, 0, 0);
+
+    dc.fillStyle = '#f5f0eb';
+    dc.fillRect(0, img.height, downloadCanvas.width, infoHeight);
+
+    dc.fillStyle = photo.hex;
+    dc.roundRect(padding, img.height + 14, 60, 60, 12);
+    dc.fill();
+
+    dc.fillStyle = '#1a1a1a';
+    dc.font = `bold 22px 'Nunito', sans-serif`;
+    dc.fillText(photo.colorName, padding + 72, img.height + 36);
+
+    dc.fillStyle = '#999';
+    dc.font = `14px monospace`;
+    dc.fillText(`${photo.hex}  |  R:${photo.r}  G:${photo.g}  B:${photo.b}`, padding + 72, img.height + 58);
+
+    dc.fillStyle = '#bbb';
+    dc.font = `12px sans-serif`;
+    dc.fillText(photo.time, padding + 72, img.height + 78);
+
+    const link = document.createElement('a');
+    link.download = `colorscan_${photo.colorName}_${photo.hex.replace('#','')}.jpg`;
+    link.href = downloadCanvas.toDataURL('image/jpeg', 0.95);
+    link.click();
+    showToast('💾 이미지 저장 완료!');
+  };
+  img.src = photo.image;
+}
+
+function deletePhoto(id) {
+  photos = photos.filter(p => p.id !== id);
+  renderGallery();
+  showToast('🗑 사진 삭제됨');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
 }
 
 function getColorName(r, g, b) {
@@ -470,15 +483,33 @@ function getColorName(r, g, b) {
   const delta = max - min;
   const brightness = (r * 299 + g * 587 + b * 114) / 1000;
   const saturation = max === 0 ? 0 : delta / max;
+  const lightness = (max + min) / 2 / 255;
 
-  if (brightness < 40) return '검정';
-  if (brightness > 220 && saturation < 0.15) return '흰색';
-  if (saturation < 0.15) {
-    if (brightness < 85) return '진회색';
+  // 무채색 계열
+  if (brightness < 25) return '검정';
+  if (brightness < 55) return '매우 어두운 회색';
+  if (brightness > 245 && saturation < 0.06) return '흰색';
+  if (brightness > 225 && saturation < 0.08) return '아이보리';
+  if (saturation < 0.08) {
+    if (brightness < 80) return '짙은 회색';
+    if (brightness < 120) return '어두운 회색';
     if (brightness < 160) return '회색';
-    return '밝은회색';
+    if (brightness < 195) return '밝은 회색';
+    if (brightness < 225) return '연회색';
+    return '흰색에 가까운 회색';
   }
 
+  // 갈색/베이지 계열 (채도 낮은 따뜻한 색)
+  if (saturation < 0.35 && r > g && r > b) {
+    if (brightness < 60) return '짙은 갈색';
+    if (brightness < 100) return '갈색';
+    if (brightness < 140) return '황갈색';
+    if (brightness < 180) return '카키색';
+    if (brightness < 215) return '베이지';
+    return '크림색';
+  }
+
+  // 색조 계산 (HSV 방식)
   let hue = 0;
   if (max === r) hue = ((g - b) / delta) % 6;
   else if (max === g) hue = (b - r) / delta + 2;
@@ -486,24 +517,126 @@ function getColorName(r, g, b) {
   hue = Math.round(hue * 60);
   if (hue < 0) hue += 360;
 
-  if (hue < 15 || hue >= 345) return '빨간색';
-  if (hue < 40) return '주황색';
-  if (hue < 70) return '노란색';
-  if (hue < 80) return '연두색';
-  if (hue < 160) return '초록색';
-  if (hue < 195) return '청록색';
-  if (hue < 255) return '파란색';
-  if (hue < 285) return '남색';
-  if (hue < 320) return '보라색';
-  if (hue < 345) return '분홍색';
+  const isDark = lightness < 0.25;
+  const isLight = lightness > 0.72;
+  const isVibrant = saturation > 0.6;
+
+  // 빨강 계열 (0~15, 345~360)
+  if (hue < 8 || hue >= 352) {
+    if (isDark) return '다크 레드';
+    if (isLight) return '연분홍';
+    if (isVibrant) return '빨간색';
+    return '적색';
+  }
+
+  // 빨강~주황 (8~20)
+  if (hue < 20) {
+    if (isDark) return '다크 오렌지';
+    if (isLight) return '살구색';
+    return '주홍색';
+  }
+
+  // 주황 계열 (20~40)
+  if (hue < 40) {
+    if (isDark) return '진한 주황';
+    if (isLight) return '복숭아색';
+    if (isVibrant) return '주황색';
+    return '오렌지';
+  }
+
+  // 주황~노랑 (40~55)
+  if (hue < 55) {
+    if (isDark) return '황토색';
+    if (isLight) return '연노랑';
+    return '황금색';
+  }
+
+  // 노랑 계열 (55~68)
+  if (hue < 68) {
+    if (isDark) return '올리브색';
+    if (isLight) return '밝은 노랑';
+    if (isVibrant) return '노란색';
+    return '노란색';
+  }
+
+  // 노랑~연두 (68~85)
+  if (hue < 85) {
+    if (isDark) return '올리브 그린';
+    if (isLight) return '연두색';
+    return '황록색';
+  }
+
+  // 연두~초록 (85~140)
+  if (hue < 140) {
+    if (isDark) return '짙은 초록';
+    if (isLight) return '민트그린';
+    if (isVibrant) return '초록색';
+    if (hue < 110) return '풀색';
+    return '초록색';
+  }
+
+  // 초록~청록 (140~175)
+  if (hue < 175) {
+    if (isDark) return '다크 그린';
+    if (isLight) return '연한 청록';
+    return '청록색';
+  }
+
+  // 청록~시안 (175~200)
+  if (hue < 200) {
+    if (isDark) return '짙은 청록';
+    if (isLight) return '하늘색';
+    if (isVibrant) return '시안';
+    return '청록색';
+  }
+
+  // 하늘~파랑 (200~230)
+  if (hue < 230) {
+    if (isDark) return '짙은 파랑';
+    if (isLight) return '하늘색';
+    if (isVibrant) return '파란색';
+    return '파란색';
+  }
+
+  // 파랑~남색 (230~255)
+  if (hue < 255) {
+    if (isDark) return '네이비';
+    if (isLight) return '연파랑';
+    if (isVibrant) return '코발트블루';
+    return '진파랑';
+  }
+
+  // 남색~보라 (255~285)
+  if (hue < 285) {
+    if (isDark) return '짙은 남색';
+    if (isLight) return '라벤더';
+    if (isVibrant) return '보라색';
+    return '남보라';
+  }
+
+  // 보라~자주 (285~320)
+  if (hue < 320) {
+    if (isDark) return '다크 퍼플';
+    if (isLight) return '연보라';
+    if (isVibrant) return '보라색';
+    return '자주색';
+  }
+
+  // 자주~분홍 (320~345)
+  if (hue < 345) {
+    if (isDark) return '와인색';
+    if (isLight) return '핑크';
+    if (isVibrant) return '마젠타';
+    return '분홍색';
+  }
+
   return '알수없음';
 }
 
 function speak(text) {
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ko-KR';
-  u.rate = 0.95;
+  u.lang = 'ko-KR'; u.rate = 0.95;
   window.speechSynthesis.speak(u);
 }
 
