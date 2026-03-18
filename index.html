@@ -236,18 +236,21 @@
         <button class="btn-admin-login" id="adminLoginBtn" onclick="toggleAdmin()">🔒 관리자</button>
       </div>
     </div>
-    <div class="admin-locked" id="adminLockedMsg">🔒 관리자만 기록을 열람할 수 있어요</div>
-    <div id="adminPanel" style="display:none;">
-      <div style="padding:10px 16px 0;display:flex;gap:6px;justify-content:flex-end;">
+
+    <!-- 누구나 볼 수 있는 테이블 -->
+    <div class="rgb-log-empty" id="logEmpty">아직 기록이 없어요<br>사진을 찍으면 자동 저장돼요!</div>
+    <div class="rgb-log-table-wrap" id="logTableWrap" style="display:none;">
+      <table class="rgb-log-table">
+        <thead><tr><th>색상</th><th>이름</th><th>HEX</th><th>R</th><th>G</th><th>B</th><th>필터</th><th>시간</th></tr></thead>
+        <tbody id="logTableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- 관리자 전용 버튼 (기본 숨김) -->
+    <div id="adminPanel" style="display:none;border-top:1px solid var(--border);">
+      <div style="padding:10px 16px 12px;display:flex;gap:6px;justify-content:flex-end;">
         <button class="btn-csv" onclick="exportCSV()">📥 CSV 저장</button>
         <button class="btn-clear-log" onclick="clearLog()">🗑 초기화</button>
-      </div>
-      <div class="rgb-log-empty" id="logEmpty">아직 기록이 없어요<br>사진을 찍으면 자동 저장돼요!</div>
-      <div class="rgb-log-table-wrap" id="logTableWrap" style="display:none;">
-        <table class="rgb-log-table">
-          <thead><tr><th>색상</th><th>이름</th><th>HEX</th><th>R</th><th>G</th><th>B</th><th>필터</th><th>시간</th></tr></thead>
-          <tbody id="logTableBody"></tbody>
-        </table>
       </div>
     </div>
   </div>
@@ -558,7 +561,6 @@ function toggleAdmin() {
   if (isAdmin) {
     isAdmin=false;
     document.getElementById('adminPanel').style.display='none';
-    document.getElementById('adminLockedMsg').style.display='block';
     document.getElementById('adminLoginBtn').textContent='🔒 관리자';
     document.getElementById('adminLoginBtn').classList.remove('on');
     showToast('🔒 관리자 로그아웃'); return;
@@ -567,11 +569,10 @@ function toggleAdmin() {
   if (pw===null) return;
   if (pw===ADMIN_PW) {
     isAdmin=true;
-    document.getElementById('adminLockedMsg').style.display='none';
     document.getElementById('adminPanel').style.display='block';
     document.getElementById('adminLoginBtn').textContent='🔓 로그아웃';
     document.getElementById('adminLoginBtn').classList.add('on');
-    renderLog(); showToast('🔓 관리자 로그인 성공!');
+    showToast('🔓 관리자 로그인 성공!');
   } else { showToast('❌ 비밀번호가 틀렸어요!'); }
 }
 
