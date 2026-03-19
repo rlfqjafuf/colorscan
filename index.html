@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>색깔 감지기</title>
+<title>색깔 감지기 Pro</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ff6b35">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -14,22 +16,42 @@
     --muted: #999;
     --accent: #ff6b35;
   }
+  
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121212;
+      --surface: #1e1e1e;
+      --border: rgba(255,255,255,0.1);
+      --text: #f0f0f0;
+      --muted: #aaa;
+    }
+    .camera-frame { background: #2a2a2a !important; }
+    .color-swatch, .palette-color { border: 1px solid rgba(255,255,255,0.2) !important; }
+    .rgb-log-table th { background: #2a2a2a !important; }
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+  
   .header { width: 100%; max-width: 420px; padding: 24px 20px 0; display: flex; align-items: center; justify-content: space-between; }
   .header-left h1 { font-family: 'Nunito', sans-serif; font-size: 28px; font-weight: 800; line-height: 1; }
   .header-left p { font-size: 12px; color: var(--muted); margin-top: 3px; font-weight: 300; }
-  .header-badge { background: var(--accent); color: white; font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 20px; font-family: 'Nunito', sans-serif; }
+  .btn-upload { background: var(--surface); color: var(--text); border: 1px solid var(--border); padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; touch-action: manipulation; }
+  
   .stage { width: min(100vw, 420px); padding: 16px; display: flex; flex-direction: column; gap: 14px; }
   .camera-card { background: var(--surface); border-radius: 24px; overflow: hidden; border: 1px solid var(--border); }
-  .camera-frame { position: relative; width: 100%; aspect-ratio: 1/1; background: #e8e0d8; overflow: hidden; }
-  video { width: 100%; height: 100%; object-fit: cover; display: block; }
-  canvas#filterCanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: none; z-index: 2; }
-  .reticle { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; z-index: 5; }
+  .camera-frame { position: relative; width: 100%; aspect-ratio: 1/1; background: #e8e0d8; overflow: hidden; touch-action: none; cursor: crosshair; }
+
+  /* ✅ 수정: video와 img 초기 상태 명확히 구분 */
+  #webcam { width: 100%; height: 100%; object-fit: cover; display: block; position: absolute; top:0; left:0; pointer-events: none; }
+  #staticImage { width: 100%; height: 100%; object-fit: cover; display: none; position: absolute; top:0; left:0; pointer-events: none; }
+  
+  .reticle { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; z-index: 5; transition: left 0.1s, top 0.1s; }
   .reticle-outer { width: 60px; height: 60px; border: 2px solid rgba(255,107,53,0.8); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
   .reticle-inner { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 20px; height: 20px; border: 1.5px solid rgba(255,107,53,0.6); border-radius: 50%; }
   .reticle-dot { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
   @keyframes pulse { 0%,100%{transform:scale(1);opacity:.9} 50%{transform:scale(1.08);opacity:.5} }
+  
   .corner { position: absolute; width: 18px; height: 18px; z-index: 10; pointer-events: none; }
   .corner-tl { top:14px;left:14px;border-top:2.5px solid var(--accent);border-left:2.5px solid var(--accent);border-radius:4px 0 0 0; }
   .corner-tr { top:14px;right:14px;border-top:2.5px solid var(--accent);border-right:2.5px solid var(--accent);border-radius:0 4px 0 0; }
@@ -39,16 +61,14 @@
   .flash-overlay.flash { opacity:1; }
   .filter-badge { position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:white;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;pointer-events:none;z-index:6;display:none;white-space:nowrap; }
   .overlay-start { position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(245,240,235,0.95);z-index:20;gap:14px;transition:opacity 0.3s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer; }
+  @media (prefers-color-scheme: dark) { .overlay-start { background:rgba(30,30,30,0.95); } }
   .overlay-start:active { opacity:0.8; }
   .start-icon { width:80px;height:80px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;pointer-events:none; }
   .overlay-start p { font-size:14px;color:var(--muted);font-weight:600;pointer-events:none; }
-  .color-result { padding:16px;display:flex;align-items:center;gap:14px; }
-  .color-swatch { width:72px;height:72px;border-radius:18px;background:#e8e0d8;border:1px solid var(--border);transition:background-color 0.4s ease;flex-shrink:0; }
-  .color-label { font-size:11px;color:var(--muted);font-weight:500;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px; }
-  .color-name-kr { font-family:'Nunito',sans-serif;font-size:28px;font-weight:800;line-height:1;transition:color 0.3s; }
-  .color-hex { font-size:12px;color:var(--muted);font-family:monospace;margin-top:5px; }
+  
+  .zoom-wrap { padding: 12px 16px 0; display: none; align-items: center; gap: 10px; }
+  .zoom-slider { flex: 1; accent-color: var(--accent); }
 
-  /* 필터 섹션 */
   .filter-section { padding:12px 16px 0; border-bottom: 1px solid var(--border); }
   .filter-label { font-size:11px;color:var(--muted);font-weight:500;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px; }
   .filter-scroll { display:flex;gap:7px;overflow-x:auto;padding-bottom:12px;-webkit-overflow-scrolling:touch;scrollbar-width:none; }
@@ -57,12 +77,20 @@
   .filter-btn.active { background:var(--accent);border-color:var(--accent);color:white; }
   .filter-btn:active { transform:scale(0.96); }
 
+  .color-result { padding:16px;display:flex;align-items:center;gap:14px; }
+  .color-swatch { width:72px;height:72px;border-radius:18px;background:#e8e0d8;border:1px solid var(--border);transition:background-color 0.4s ease;flex-shrink:0; }
+  .color-label { font-size:11px;color:var(--muted);font-weight:500;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px; }
+  .color-name-kr { font-family:'Nunito',sans-serif;font-size:28px;font-weight:800;line-height:1;transition:color 0.3s; }
+  .color-hex { font-size:12px;color:var(--muted);font-family:monospace;margin-top:2px; }
+  .palette-wrap { display: flex; gap: 6px; margin-top: 6px; }
+  .palette-color { width: 20px; height: 20px; border-radius: 6px; border: 1px solid var(--border); }
+
   .capture-btn-wrap { padding:12px 16px 16px;display:flex;gap:10px; }
   .capture-btn { flex:1;padding:14px;background:var(--accent);color:white;border:none;border-radius:16px;font-size:15px;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.2s,transform 0.1s;touch-action:manipulation; }
   .capture-btn:active { transform:scale(0.98);background:#e85a25; }
   .capture-btn:disabled { background:#ccc;cursor:not-allowed; }
-  .torch-btn { width:54px;height:54px;background:#f5f0eb;border:1px solid var(--border);border-radius:16px;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;touch-action:manipulation; }
-  .torch-btn.on { background:#fff9e6;border-color:#ffd166; }
+  .torch-btn { width:54px;height:54px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:16px;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;touch-action:manipulation; }
+  .torch-btn.on { background:#fff9e6; border-color:#ffd166; }
   .torch-btn:disabled { opacity:0.4;cursor:not-allowed; }
 
   .info-card { background:var(--surface);border-radius:20px;border:1px solid var(--border);overflow:hidden; }
@@ -73,6 +101,7 @@
   .bar-label { font-size:12px;font-weight:700;font-family:'Nunito',sans-serif;width:14px; }
   .bar-label.r { color:#e74c4c; } .bar-label.g { color:#27ae60; } .bar-label.b { color:#2980b9; }
   .bar-track { flex:1;height:6px;background:#f0ebe4;border-radius:3px;overflow:hidden; }
+  @media (prefers-color-scheme: dark) { .bar-track { background:#333; } }
   .bar-fill { height:100%;border-radius:3px;transition:width 0.4s ease;width:0%; }
   .fill-r { background:#e74c4c; } .fill-g { background:#27ae60; } .fill-b { background:#2980b9; }
   .bar-val { font-size:11px;color:var(--muted);font-family:monospace;width:28px;text-align:right; }
@@ -82,13 +111,13 @@
   .status-dot.active { background:#2ecc71;animation:blink 1.5s ease-in-out infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
   .status-text { font-size:12px;color:var(--muted);font-weight:500; }
-  .btn-sound { display:flex;align-items:center;gap:6px;background:#f5f0eb;border:1px solid var(--border);color:var(--muted);padding:6px 12px;font-size:12px;font-family:'Noto Sans KR',sans-serif;font-weight:500;cursor:pointer;border-radius:20px;transition:all 0.2s;touch-action:manipulation; }
+  .btn-sound { display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);color:var(--muted);padding:6px 12px;font-size:12px;font-family:'Noto Sans KR',sans-serif;font-weight:500;cursor:pointer;border-radius:20px;transition:all 0.2s;touch-action:manipulation; }
   .btn-sound.on { background:#fff3ee;border-color:#ffcfbc;color:var(--accent); }
 
   .gallery-section { background:var(--surface);border-radius:20px;border:1px solid var(--border);overflow:hidden; }
   .gallery-header { padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
   .gallery-title { font-size:13px;font-weight:700;font-family:'Nunito',sans-serif; }
-  .gallery-count { font-size:11px;color:var(--muted);background:#f5f0eb;padding:3px 8px;border-radius:10px; }
+  .gallery-count { font-size:11px;color:var(--text);background:var(--bg);padding:3px 8px;border-radius:10px; }
   .gallery-empty { padding:28px 16px;text-align:center;color:var(--muted);font-size:13px; }
   .gallery-grid { padding:12px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px; }
   .photo-card { border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--surface); }
@@ -98,53 +127,63 @@
   .photo-swatch { width:16px;height:16px;border-radius:4px;flex-shrink:0;border:1px solid var(--border); }
   .photo-color-name { font-size:12px;font-weight:700;font-family:'Nunito',sans-serif; }
   .photo-hex { font-size:10px;color:var(--muted);font-family:monospace; }
-  .photo-rgb { font-size:10px;color:var(--muted);margin-top:2px; }
-  .photo-time { font-size:10px;color:var(--muted);margin-top:3px; }
   .photo-filter { font-size:10px;color:var(--accent);margin-top:2px;font-weight:600; }
-  .photo-actions { display:flex;gap:5px;margin-top:7px; }
-  .btn-download,.btn-delete { flex:1;padding:5px;font-size:11px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:500;transition:all 0.15s;background:#f5f0eb;color:var(--muted);touch-action:manipulation; }
+  .photo-time { font-size:10px;color:var(--muted);margin-top:3px; }
+  .photo-actions { display:flex;gap:5px;margin-top:7px;flex-wrap:wrap; }
+  .btn-download,.btn-delete,.btn-share { flex:1;min-width:30%;padding:5px;font-size:11px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:500;transition:all 0.15s;background:var(--bg);color:var(--text);touch-action:manipulation; }
 
   .rgb-log-section { background:var(--surface);border-radius:20px;border:1px solid var(--border);overflow:hidden; }
   .rgb-log-header { padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px; }
   .rgb-log-title { font-size:13px;font-weight:700;font-family:'Nunito',sans-serif;flex:1; }
-  .btn-csv { font-size:11px;padding:5px 10px;border-radius:10px;border:1px solid var(--border);background:#f5f0eb;color:var(--muted);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:500;touch-action:manipulation; }
-  .btn-clear-log { font-size:11px;padding:5px 10px;border-radius:10px;border:1px solid var(--border);background:#f5f0eb;color:var(--muted);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:500;touch-action:manipulation; }
-  .btn-admin-login { font-size:11px;padding:5px 12px;border-radius:10px;border:1px solid var(--border);background:#f5f0eb;color:var(--muted);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:600;touch-action:manipulation;transition:all 0.2s; }
+  .btn-csv { font-size:11px;padding:5px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:500;touch-action:manipulation; }
+  .btn-clear-log { font-size:11px;padding:5px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:500;touch-action:manipulation; }
+  .btn-admin-login { font-size:11px;padding:5px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:600;touch-action:manipulation;transition:all 0.2s; }
   .btn-admin-login.on { background:#fff3ee;border-color:#ffcfbc;color:var(--accent); }
-  .admin-locked { padding:24px 16px;text-align:center;color:var(--muted);font-size:13px; }
   .rgb-log-empty { padding:24px 16px;text-align:center;color:var(--muted);font-size:13px; }
   .rgb-log-table-wrap { overflow-x:auto; }
   .rgb-log-table { width:100%;border-collapse:collapse;font-size:12px; }
   .rgb-log-table th { padding:8px 12px;text-align:left;font-size:10px;color:var(--muted);font-weight:500;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border);background:#faf7f4; }
   .rgb-log-table td { padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle; }
-  .rgb-log-table tr:last-child td { border-bottom:none; }
   .log-swatch { width:18px;height:18px;border-radius:4px;display:inline-block;border:1px solid var(--border);vertical-align:middle; }
-  .log-count { font-size:11px;color:var(--muted);background:#f5f0eb;padding:3px 8px;border-radius:10px; }
+  .log-count { font-size:11px;color:var(--text);background:var(--bg);padding:3px 8px;border-radius:10px; }
 
-  .toast { position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a1a;color:white;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:all 0.3s;z-index:100;white-space:nowrap; }
+  .toast { position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a1a;color:white;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:all 0.3s;z-index:100;white-space:nowrap;pointer-events:none; }
   .toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
+
+<svg style="display:none;">
+  <filter id="protanopia"><feColorMatrix type="matrix" values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0" /></filter>
+  <filter id="deuteranopia"><feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.700 0.300 0 0 0  0 0.300 0.700 0 0" /></filter>
+  <filter id="tritanopia"><feColorMatrix type="matrix" values="0.950 0.050 0 0 0  0 0.433 0.567 0 0  0 0.475 0.525 0 0" /></filter>
+  <filter id="achromatopsia"><feColorMatrix type="matrix" values="0.299 0.587 0.114 0 0  0.299 0.587 0.114 0 0  0.299 0.587 0.114 0 0" /></filter>
+  <filter id="protanomaly"><feColorMatrix type="matrix" values="0.817 0.183 0 0 0  0.333 0.667 0 0 0  0 0.125 0.875 0 0" /></filter>
+  <filter id="deuteranomaly"><feColorMatrix type="matrix" values="0.800 0.200 0 0 0  0.258 0.742 0 0 0  0 0.142 0.858 0 0" /></filter>
+</svg>
 
 <div class="header">
   <div class="header-left">
     <h1>Color Scan</h1>
     <p>색깔 감지 카메라</p>
   </div>
-  <div class="header-badge">LIVE</div>
+  <div style="display:flex;gap:8px;">
+    <button class="btn-upload" onclick="document.getElementById('fileInput').click()">📁 사진 불러오기</button>
+    <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+  </div>
 </div>
 
 <div class="stage">
   <div class="camera-card">
-    <div class="camera-frame" id="cameraFrame">
+    <div class="camera-frame" id="cameraFrame" onpointerdown="moveReticle(event)">
       <div class="corner corner-tl"></div>
       <div class="corner corner-tr"></div>
       <div class="corner corner-bl"></div>
       <div class="corner corner-br"></div>
       <video id="webcam" autoplay playsinline muted></video>
-      <canvas id="filterCanvas"></canvas>
-      <div class="reticle">
+      <!-- ✅ 수정: 초기 display:none으로 숨김 처리 -->
+      <img id="staticImage" alt="" style="display:none;">
+      <div class="reticle" id="reticleUI">
         <div class="reticle-outer"></div>
         <div class="reticle-inner"></div>
         <div class="reticle-dot"></div>
@@ -157,7 +196,11 @@
       </div>
     </div>
 
-    <!-- 색맹 필터 -->
+    <div class="zoom-wrap" id="zoomWrap">
+      <span style="font-size:12px;">🔍</span>
+      <input type="range" class="zoom-slider" id="zoomSlider" min="1" max="3" step="0.1" value="1" oninput="changeZoom(this.value)">
+    </div>
+
     <div class="filter-section">
       <div class="filter-label">색맹 시뮬레이션 필터</div>
       <div class="filter-scroll">
@@ -177,6 +220,7 @@
         <div class="color-label">감지된 색상</div>
         <div class="color-name-kr" id="colorName">—</div>
         <div class="color-hex" id="colorHex">#——————</div>
+        <div class="palette-wrap" id="colorPalette"></div>
       </div>
     </div>
 
@@ -236,8 +280,7 @@
         <button class="btn-admin-login" id="adminLoginBtn" onclick="toggleAdmin()">🔒 관리자</button>
       </div>
     </div>
-
-    <!-- 누구나 볼 수 있는 테이블 -->
+    <!-- 누구나 열람 가능 -->
     <div class="rgb-log-empty" id="logEmpty">아직 기록이 없어요<br>사진을 찍으면 자동 저장돼요!</div>
     <div class="rgb-log-table-wrap" id="logTableWrap" style="display:none;">
       <table class="rgb-log-table">
@@ -245,8 +288,7 @@
         <tbody id="logTableBody"></tbody>
       </table>
     </div>
-
-    <!-- 관리자 전용 버튼 (기본 숨김) -->
+    <!-- 관리자 전용 버튼 -->
     <div id="adminPanel" style="display:none;border-top:1px solid var(--border);">
       <div style="padding:10px 16px 12px;display:flex;gap:6px;justify-content:flex-end;">
         <button class="btn-csv" onclick="exportCSV()">📥 CSV 저장</button>
@@ -263,12 +305,12 @@
 const video = document.getElementById('webcam');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d', { willReadFrequently: true });
-const filterCanvas = document.getElementById('filterCanvas');
-const filterCtx = filterCanvas.getContext('2d', { willReadFrequently: true });
+const staticImg = document.getElementById('staticImage');
 const overlayStart = document.getElementById('overlayStart');
 const captureBtn = document.getElementById('captureBtn');
 
 let isRunning = false;
+let isStaticMode = false;
 let soundOn = false;
 let prevColorName = '';
 let currentR = 0, currentG = 0, currentB = 0;
@@ -281,44 +323,19 @@ let isAdmin = false;
 let audioUnlocked = false;
 let currentFilter = 'normal';
 let filterName = '일반';
-let filterAnimId = null;
+let targetX = null;
+let targetY = null;
+
 const ADMIN_PW = 'sdhs202603@';
 
-// =====================
-// 색맹 변환 행렬 (연구 기반 정확한 값)
-// =====================
 const FILTERS = {
   normal: null,
-  protanopia: [
-    0.567, 0.433, 0,
-    0.558, 0.442, 0,
-    0,     0.242, 0.758
-  ],
-  deuteranopia: [
-    0.625, 0.375, 0,
-    0.700, 0.300, 0,
-    0,     0.300, 0.700
-  ],
-  tritanopia: [
-    0.950, 0.050, 0,
-    0,     0.433, 0.567,
-    0,     0.475, 0.525
-  ],
-  achromatopsia: [
-    0.299, 0.587, 0.114,
-    0.299, 0.587, 0.114,
-    0.299, 0.587, 0.114
-  ],
-  protanomaly: [
-    0.817, 0.183, 0,
-    0.333, 0.667, 0,
-    0,     0.125, 0.875
-  ],
-  deuteranomaly: [
-    0.800, 0.200, 0,
-    0.258, 0.742, 0,
-    0,     0.142, 0.858
-  ]
+  protanopia:    [0.567, 0.433, 0,     0.558, 0.442, 0,     0,     0.242, 0.758],
+  deuteranopia:  [0.625, 0.375, 0,     0.700, 0.300, 0,     0,     0.300, 0.700],
+  tritanopia:    [0.950, 0.050, 0,     0,     0.433, 0.567, 0,     0.475, 0.525],
+  achromatopsia: [0.299, 0.587, 0.114, 0.299, 0.587, 0.114, 0.299, 0.587, 0.114],
+  protanomaly:   [0.817, 0.183, 0,     0.333, 0.667, 0,     0,     0.125, 0.875],
+  deuteranomaly: [0.800, 0.200, 0,     0.258, 0.742, 0,     0,     0.142, 0.858]
 };
 
 const FILTER_NAMES = {
@@ -331,50 +348,172 @@ const FILTER_NAMES = {
   deuteranomaly: '녹색약 (Deuteranomaly)'
 };
 
+// ---------------------------
+// 공통 유틸리티
+// ---------------------------
+function triggerVibration(ms = 30) {
+  if (navigator.vibrate) navigator.vibrate(ms);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ---------------------------
+// 필터 / 줌 / 파일 업로드
+// ---------------------------
 function setFilter(type, btn) {
+  triggerVibration(20);
   currentFilter = type;
   filterName = FILTER_NAMES[type];
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const badge = document.getElementById('filterBadge');
   if (type === 'normal') {
-    filterCanvas.style.display = 'none';
+    video.style.filter = 'none';
+    staticImg.style.filter = 'none';
     badge.style.display = 'none';
-    if (filterAnimId) { cancelAnimationFrame(filterAnimId); filterAnimId = null; }
   } else {
-    filterCanvas.style.display = 'block';
+    video.style.filter = `url(#${type})`;
+    staticImg.style.filter = `url(#${type})`;
     badge.style.display = 'block';
     badge.textContent = filterName;
-    if (isRunning && !filterAnimId) startFilterLoop();
   }
   showToast(`필터: ${filterName}`);
 }
 
-function startFilterLoop() {
-  function loop() {
-    applyFilter();
-    filterAnimId = requestAnimationFrame(loop);
-  }
-  loop();
+async function changeZoom(val) {
+  if (!video.srcObject) return;
+  const track = video.srcObject.getVideoTracks()[0];
+  if (!track) return;
+  try { await track.applyConstraints({ advanced: [{ zoom: parseFloat(val) }] }); } catch(e) {}
 }
 
-function applyFilter() {
-  if (!isRunning || currentFilter === 'normal') return;
-  const w = filterCanvas.width, h = filterCanvas.height;
-  filterCtx.drawImage(video, 0, 0, w, h);
-  const imgData = filterCtx.getImageData(0, 0, w, h);
-  const d = imgData.data;
-  const m = FILTERS[currentFilter];
-  for (let i = 0; i < d.length; i += 4) {
-    const r = d[i], g = d[i+1], b = d[i+2];
-    d[i]   = Math.min(255, m[0]*r + m[1]*g + m[2]*b);
-    d[i+1] = Math.min(255, m[3]*r + m[4]*g + m[5]*b);
-    d[i+2] = Math.min(255, m[6]*r + m[7]*g + m[8]*b);
-  }
-  filterCtx.putImageData(imgData, 0, 0);
+function handleImageUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  triggerVibration(30);
+  const url = URL.createObjectURL(file);
+  staticImg.src = url;
+  // ✅ 수정: 명확한 표시/숨김 처리
+  staticImg.style.display = 'block';
+  video.style.display = 'none';
+  isStaticMode = true;
+  isRunning = true;
+  staticImg.onload = () => {
+    document.getElementById('zoomWrap').style.display = 'none';
+    document.getElementById('torchBtn').disabled = true;
+    overlayStart.style.display = 'none';
+    document.getElementById('statusDot').classList.add('active');
+    document.getElementById('statusText').textContent = '사진 분석 중';
+    captureBtn.disabled = false;
+    analyzeColor();
+    showToast('사진을 불러왔습니다. 원하는 곳을 터치해보세요!');
+  };
 }
 
-renderLog();
+// ---------------------------
+// 터치 및 캔버스
+// ---------------------------
+function moveReticle(e) {
+  if (!isRunning) return;
+  triggerVibration(15);
+  const frame = document.getElementById('cameraFrame');
+  const rect = frame.getBoundingClientRect();
+  let clientX = e.clientX, clientY = e.clientY;
+  if (e.touches && e.touches.length > 0) {
+    clientX = e.touches[0].clientX;
+    clientY = e.touches[0].clientY;
+  }
+  const x = clientX - rect.left;
+  const y = clientY - rect.top;
+  const reticle = document.getElementById('reticleUI');
+  reticle.style.left = `${x}px`;
+  reticle.style.top = `${y}px`;
+  targetX = x;
+  targetY = y;
+  if (isStaticMode) analyzeColor();
+}
+
+function drawCover(ctx, source, w, h) {
+  const sW = source.videoWidth || source.naturalWidth;
+  const sH = source.videoHeight || source.naturalHeight;
+  if (!sW || !sH) return;
+  const imgRatio = sW / sH;
+  const canvasRatio = w / h;
+  let drawW = w, drawH = h, offsetX = 0, offsetY = 0;
+  if (imgRatio > canvasRatio) {
+    drawW = h * imgRatio;
+    offsetX = (w - drawW) / 2;
+  } else {
+    drawH = w / imgRatio;
+    offsetY = (h - drawH) / 2;
+  }
+  ctx.drawImage(source, offsetX, offsetY, drawW, drawH);
+}
+
+// ---------------------------
+// 색상 분석
+// ---------------------------
+function analyzeColor() {
+  if (!isRunning) return;
+  const frameRect = document.getElementById('cameraFrame').getBoundingClientRect();
+  canvas.width = frameRect.width;
+  canvas.height = frameRect.height;
+  if (isStaticMode) {
+    drawCover(ctx, staticImg, canvas.width, canvas.height);
+  } else {
+    drawCover(ctx, video, canvas.width, canvas.height);
+  }
+  const cx = targetX !== null ? targetX : Math.floor(canvas.width / 2);
+  const cy = targetY !== null ? targetY : Math.floor(canvas.height / 2);
+  let rSum = 0, gSum = 0, bSum = 0, count = 0;
+  for (let dx = -8; dx <= 8; dx += 4) {
+    for (let dy = -8; dy <= 8; dy += 4) {
+      try {
+        const px = ctx.getImageData(cx + dx, cy + dy, 1, 1).data;
+        rSum += px[0]; gSum += px[1]; bSum += px[2]; count++;
+      } catch(e) {}
+    }
+  }
+  if (count === 0) return;
+  currentR = Math.round(rSum / count);
+  currentG = Math.round(gSum / count);
+  currentB = Math.round(bSum / count);
+  updateUI(currentR, currentG, currentB);
+}
+
+function updateUI(r, g, b) {
+  currentHex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase();
+  currentColorName = getColorName(r, g, b);
+  document.getElementById('colorSwatch').style.backgroundColor = `rgb(${r},${g},${b})`;
+  document.getElementById('colorName').textContent = currentColorName;
+  document.getElementById('colorHex').textContent = currentHex;
+  document.getElementById('barR').style.width = (r / 255 * 100) + '%';
+  document.getElementById('barG').style.width = (g / 255 * 100) + '%';
+  document.getElementById('barB').style.width = (b / 255 * 100) + '%';
+  document.getElementById('valR').textContent = r;
+  document.getElementById('valG').textContent = g;
+  document.getElementById('valB').textContent = b;
+  const compR = 255 - r, compG = 255 - g, compB = 255 - b;
+  document.getElementById('colorPalette').innerHTML = `
+    <div class="palette-color" style="background:rgb(${r},${g},${b})" title="원래 색상"></div>
+    <div class="palette-color" style="background:rgb(${compR},${compG},${compB})" title="보색(반전)"></div>
+  `;
+  if (!isStaticMode && soundOn && audioUnlocked && currentColorName !== prevColorName && currentColorName !== '알수없음') {
+    speak(currentColorName);
+    prevColorName = currentColorName;
+  }
+}
+
+// ---------------------------
+// 카메라 시작
+// ---------------------------
+overlayStart.addEventListener('click', tryStartCamera);
+overlayStart.addEventListener('touchend', tryStartCamera, { passive: false });
 
 function tryStartCamera(e) {
   e.preventDefault();
@@ -383,10 +522,9 @@ function tryStartCamera(e) {
   cameraStarted = true;
   startCamera();
 }
-overlayStart.addEventListener('click', tryStartCamera);
-overlayStart.addEventListener('touchend', tryStartCamera, { passive: false });
 
 async function startCamera() {
+  triggerVibration();
   document.querySelector('.overlay-start p').textContent = '카메라 연결 중...';
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     showCameraError('이 브라우저는 카메라를 지원하지 않아요.\n크롬 최신 버전을 사용해 주세요.');
@@ -400,10 +538,18 @@ async function startCamera() {
       stream = await navigator.mediaDevices.getUserMedia({ video: true });
     }
     video.srcObject = stream;
+    const track = stream.getVideoTracks()[0];
+    const caps = track.getCapabilities();
+    if (caps.zoom) {
+      const zoomWrap = document.getElementById('zoomWrap');
+      const zoomSlider = document.getElementById('zoomSlider');
+      zoomWrap.style.display = 'flex';
+      zoomSlider.min = caps.zoom.min || 1;
+      zoomSlider.max = caps.zoom.max || 3;
+      zoomSlider.step = caps.zoom.step || 0.1;
+      zoomSlider.value = track.getSettings().zoom || 1;
+    }
     video.addEventListener('loadeddata', () => {
-      const w = video.videoWidth || 640, h = video.videoHeight || 640;
-      canvas.width = w; canvas.height = h;
-      filterCanvas.width = w; filterCanvas.height = h;
       overlayStart.style.opacity = '0';
       setTimeout(() => overlayStart.style.display = 'none', 300);
       document.getElementById('statusDot').classList.add('active');
@@ -412,20 +558,11 @@ async function startCamera() {
       document.getElementById('torchBtn').disabled = false;
       isRunning = true;
       setInterval(analyzeColor, 800);
-      if (currentFilter !== 'normal') startFilterLoop();
     });
     video.addEventListener('error', () => { showCameraError('영상 로딩 중 오류가 발생했어요.'); cameraStarted = false; });
   } catch(e) {
     cameraStarted = false;
-    if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
-      showCameraError('카메라 권한을 허용해 주세요!\n\n주소창 왼쪽 🔒 아이콘\n→ 카메라 → 허용\n→ 새로고침');
-    } else if (e.name === 'NotFoundError') {
-      showCameraError('카메라를 찾을 수 없어요.');
-    } else if (e.name === 'NotReadableError') {
-      showCameraError('카메라가 다른 앱에서 사용 중이에요.');
-    } else {
-      showCameraError(`카메라 오류\n${e.name}: ${e.message}`);
-    }
+    showCameraError('카메라 권한을 허용해 주세요!\n\n주소창 🔒 아이콘 → 카메라 → 허용');
   }
 }
 
@@ -435,89 +572,70 @@ function showCameraError(msg) {
   overlay.innerHTML = `<div style="padding:24px;text-align:center;"><div style="font-size:40px;margin-bottom:12px;">⚠️</div><p style="font-size:13px;color:#e74c4c;font-weight:600;line-height:1.8;white-space:pre-line;">${msg}</p><button onclick="location.reload()" style="margin-top:18px;padding:12px 28px;background:#ff6b35;color:white;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;">다시 시도</button></div>`;
 }
 
-function analyzeColor() {
-  if (!isRunning) return;
-  const cx = Math.floor(canvas.width / 2), cy = Math.floor(canvas.height / 2);
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  let rSum = 0, gSum = 0, bSum = 0, count = 0;
-  for (let dx = -8; dx <= 8; dx += 4) {
-    for (let dy = -8; dy <= 8; dy += 4) {
-      const px = ctx.getImageData(cx+dx, cy+dy, 1, 1).data;
-      rSum += px[0]; gSum += px[1]; bSum += px[2]; count++;
-    }
-  }
-  currentR = Math.round(rSum/count);
-  currentG = Math.round(gSum/count);
-  currentB = Math.round(bSum/count);
-  updateUI(currentR, currentG, currentB);
-}
-
-function updateUI(r, g, b) {
-  currentHex = '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('').toUpperCase();
-  currentColorName = getColorName(r, g, b);
-  document.getElementById('colorSwatch').style.backgroundColor = `rgb(${r},${g},${b})`;
-  document.getElementById('colorName').textContent = currentColorName;
-  document.getElementById('colorHex').textContent = currentHex;
-  document.getElementById('barR').style.width = (r/255*100)+'%';
-  document.getElementById('barG').style.width = (g/255*100)+'%';
-  document.getElementById('barB').style.width = (b/255*100)+'%';
-  document.getElementById('valR').textContent = r;
-  document.getElementById('valG').textContent = g;
-  document.getElementById('valB').textContent = b;
-  if (soundOn && audioUnlocked && currentColorName !== prevColorName && currentColorName !== '알수없음') {
-    speak(currentColorName); prevColorName = currentColorName;
-  }
-}
-
+// ---------------------------
+// 사진 찍기
+// ---------------------------
 function capturePhoto() {
   if (!isRunning) return;
+  triggerVibration(50);
   document.getElementById('flashOverlay').classList.add('flash');
   setTimeout(() => document.getElementById('flashOverlay').classList.remove('flash'), 200);
-
   const cc = document.createElement('canvas');
   cc.width = canvas.width; cc.height = canvas.height;
   const cctx = cc.getContext('2d');
-
-  // 필터 적용된 화면 캡처
+  cctx.drawImage(canvas, 0, 0);
   if (currentFilter !== 'normal') {
-    cctx.drawImage(filterCanvas, 0, 0);
-  } else {
-    cctx.drawImage(video, 0, 0, cc.width, cc.height);
+    const imgData = cctx.getImageData(0, 0, cc.width, cc.height);
+    const d = imgData.data;
+    const m = FILTERS[currentFilter];
+    for (let i = 0; i < d.length; i += 4) {
+      const r = d[i], g = d[i+1], b = d[i+2];
+      d[i]   = Math.min(255, m[0]*r + m[1]*g + m[2]*b);
+      d[i+1] = Math.min(255, m[3]*r + m[4]*g + m[5]*b);
+      d[i+2] = Math.min(255, m[6]*r + m[7]*g + m[8]*b);
+    }
+    cctx.putImageData(imgData, 0, 0);
   }
-
-  const cx = Math.floor(cc.width/2), cy = Math.floor(cc.height/2);
+  const rx = targetX !== null ? targetX : cc.width / 2;
+  const ry = targetY !== null ? targetY : cc.height / 2;
   cctx.strokeStyle = 'rgba(255,107,53,0.9)';
   cctx.lineWidth = 3;
   cctx.beginPath();
-  cctx.arc(cx, cy, 30, 0, Math.PI*2);
+  cctx.arc(rx, ry, 30, 0, Math.PI * 2);
   cctx.stroke();
-
   const now = new Date();
-  const timeStr = now.toLocaleDateString('ko-KR',{month:'2-digit',day:'2-digit'})+' '+now.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-
+  const timeStr = now.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' }) + ' ' +
+                  now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   photos.unshift({ id: Date.now(), image: cc.toDataURL('image/jpeg', 0.92), colorName: currentColorName, hex: currentHex, r: currentR, g: currentG, b: currentB, filter: filterName, time: timeStr });
   rgbLog.unshift({ id: Date.now(), colorName: currentColorName, hex: currentHex, r: currentR, g: currentG, b: currentB, filter: filterName, time: timeStr });
   localStorage.setItem('rgbLog', JSON.stringify(rgbLog));
-  renderGallery(); renderLog();
-  showToast(`📸 ${currentColorName} 저장 완료!`);
+  renderGallery();
+  renderLog();
+  showToast(`📸 ${currentColorName} 캡처!`);
 }
 
+// ---------------------------
+// 갤러리 및 기록
+// ---------------------------
+renderLog();
+
 function renderGallery() {
-  const grid = document.getElementById('galleryGrid'), empty = document.getElementById('galleryEmpty');
+  const grid = document.getElementById('galleryGrid');
+  const empty = document.getElementById('galleryEmpty');
   document.getElementById('galleryCount').textContent = `${photos.length}장`;
-  if (photos.length === 0) { empty.style.display='block'; grid.style.display='none'; return; }
-  empty.style.display='none'; grid.style.display='grid'; grid.innerHTML='';
+  if (photos.length === 0) { empty.style.display = 'block'; grid.style.display = 'none'; return; }
+  empty.style.display = 'none'; grid.style.display = 'grid'; grid.innerHTML = '';
   photos.forEach(photo => {
     const card = document.createElement('div');
-    card.className='photo-card';
-    card.innerHTML=`<img class="photo-img" src="${photo.image}" alt="촬영 사진">
+    card.className = 'photo-card';
+    card.innerHTML = `<img class="photo-img" src="${photo.image}" alt="촬영 사진">
       <div class="photo-info">
         <div class="photo-color-row"><div class="photo-swatch" style="background:${photo.hex}"></div><span class="photo-color-name">${photo.colorName}</span></div>
-        <div class="photo-hex">${photo.hex}</div>
-        <div class="photo-rgb">R:${photo.r} G:${photo.g} B:${photo.b}</div>
+        <div class="photo-hex">${photo.hex} &middot; R:${photo.r} G:${photo.g} B:${photo.b}</div>
         <div class="photo-filter">🔍 ${photo.filter}</div>
         <div class="photo-time">${photo.time}</div>
         <div class="photo-actions">
+          <button class="btn-share" onclick="shareColor('${photo.hex}','${photo.colorName}')">🚀 공유</button>
           <button class="btn-download" onclick="downloadPhoto(${photo.id})">💾 저장</button>
           <button class="btn-delete" onclick="deletePhoto(${photo.id})">🗑 삭제</button>
         </div>
@@ -526,183 +644,197 @@ function renderGallery() {
   });
 }
 
+function shareColor(hex, name) {
+  triggerVibration();
+  if (navigator.share) {
+    navigator.share({ title: '색상 공유', text: `제가 발견한 색상은 ${name} (${hex}) 입니다! Color Scan 앱에서 확인해보세요.` }).catch(console.error);
+  } else {
+    showToast('이 브라우저에서는 공유 기능을 지원하지 않아요.');
+  }
+}
+
 function downloadPhoto(id) {
-  const photo = photos.find(p => p.id===id);
+  triggerVibration();
+  const photo = photos.find(p => p.id === id);
   if (!photo) return;
   const dc = document.createElement('canvas');
   const img = new Image();
   img.onload = () => {
-    const pad=20, infoH=110;
-    dc.width=img.width; dc.height=img.height+infoH;
-    const c=dc.getContext('2d');
-    c.fillStyle='#ffffff'; c.fillRect(0,0,dc.width,dc.height);
-    c.drawImage(img,0,0);
-    c.fillStyle='#f5f0eb'; c.fillRect(0,img.height,dc.width,infoH);
-    c.fillStyle=photo.hex; c.roundRect(pad,img.height+14,60,60,12); c.fill();
-    c.fillStyle='#1a1a1a'; c.font=`bold 20px sans-serif`;
-    c.fillText(photo.colorName, pad+72, img.height+36);
-    c.fillStyle='#999'; c.font=`13px monospace`;
-    c.fillText(`${photo.hex}  R:${photo.r} G:${photo.g} B:${photo.b}`, pad+72, img.height+56);
-    c.fillStyle='#ff6b35'; c.font=`12px sans-serif`;
-    c.fillText(`필터: ${photo.filter}`, pad+72, img.height+76);
-    c.fillStyle='#bbb'; c.font=`11px sans-serif`;
-    c.fillText(photo.time, pad+72, img.height+94);
-    const a=document.createElement('a');
-    a.download=`colorscan_${photo.colorName}_${photo.hex.replace('#','')}.jpg`;
-    a.href=dc.toDataURL('image/jpeg',0.95); a.click();
+    const pad = 20, infoH = 110;
+    dc.width = img.width; dc.height = img.height + infoH;
+    const c = dc.getContext('2d');
+    c.fillStyle = '#ffffff'; c.fillRect(0, 0, dc.width, dc.height);
+    c.drawImage(img, 0, 0);
+    c.fillStyle = '#f5f0eb'; c.fillRect(0, img.height, dc.width, infoH);
+    c.fillStyle = photo.hex; c.roundRect(pad, img.height + 14, 60, 60, 12); c.fill();
+    c.fillStyle = '#1a1a1a'; c.font = 'bold 20px sans-serif';
+    c.fillText(photo.colorName, pad + 72, img.height + 36);
+    c.fillStyle = '#999'; c.font = '13px monospace';
+    c.fillText(`${photo.hex}  R:${photo.r} G:${photo.g} B:${photo.b}`, pad + 72, img.height + 56);
+    c.fillStyle = '#ff6b35'; c.font = '12px sans-serif';
+    c.fillText(`필터: ${photo.filter}`, pad + 72, img.height + 76);
+    c.fillStyle = '#bbb'; c.font = '11px sans-serif';
+    c.fillText(photo.time, pad + 72, img.height + 94);
+    const a = document.createElement('a');
+    a.download = `colorscan_${photo.colorName}_${photo.hex.replace('#', '')}.jpg`;
+    a.href = dc.toDataURL('image/jpeg', 0.95); a.click();
     showToast('💾 저장 완료!');
   };
-  img.src=photo.image;
+  img.src = photo.image;
 }
 
-function deletePhoto(id) { photos=photos.filter(p=>p.id!==id); renderGallery(); showToast('🗑 삭제됨'); }
+function deletePhoto(id) { triggerVibration(); photos = photos.filter(p => p.id !== id); renderGallery(); showToast('🗑 삭제됨'); }
 
 function toggleAdmin() {
+  triggerVibration();
   if (isAdmin) {
-    isAdmin=false;
-    document.getElementById('adminPanel').style.display='none';
-    document.getElementById('adminLoginBtn').textContent='🔒 관리자';
+    isAdmin = false;
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('adminLoginBtn').textContent = '🔒 관리자';
     document.getElementById('adminLoginBtn').classList.remove('on');
-    showToast('🔒 관리자 로그아웃'); return;
+    showToast('🔒 로그아웃'); return;
   }
-  const pw=prompt('관리자 비밀번호를 입력해주세요:');
-  if (pw===null) return;
-  if (pw===ADMIN_PW) {
-    isAdmin=true;
-    document.getElementById('adminPanel').style.display='block';
-    document.getElementById('adminLoginBtn').textContent='🔓 로그아웃';
+  const pw = prompt('관리자 비밀번호를 입력해주세요:');
+  if (pw === null) return;
+  if (pw === ADMIN_PW) {
+    isAdmin = true;
+    document.getElementById('adminPanel').style.display = 'block';
+    document.getElementById('adminLoginBtn').textContent = '🔓 로그아웃';
     document.getElementById('adminLoginBtn').classList.add('on');
-    showToast('🔓 관리자 로그인 성공!');
-  } else { showToast('❌ 비밀번호가 틀렸어요!'); }
+    showToast('🔓 로그인 성공!');
+  } else { showToast('❌ 비밀번호 불일치'); }
 }
 
 function renderLog() {
   if (!document.getElementById('logEmpty')) return;
-  const empty=document.getElementById('logEmpty'), wrap=document.getElementById('logTableWrap'), body=document.getElementById('logTableBody');
-  document.getElementById('logCount').textContent=`${rgbLog.length}건`;
-  if (rgbLog.length===0) { empty.style.display='block'; wrap.style.display='none'; return; }
-  empty.style.display='none'; wrap.style.display='block'; body.innerHTML='';
+  const empty = document.getElementById('logEmpty');
+  const wrap = document.getElementById('logTableWrap');
+  const body = document.getElementById('logTableBody');
+  document.getElementById('logCount').textContent = `${rgbLog.length}건`;
+  if (rgbLog.length === 0) { empty.style.display = 'block'; wrap.style.display = 'none'; return; }
+  empty.style.display = 'none'; wrap.style.display = 'block'; body.innerHTML = '';
   rgbLog.forEach(log => {
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td><span class="log-swatch" style="background:${log.hex}"></span></td>
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><span class="log-swatch" style="background:${log.hex}"></span></td>
       <td style="font-weight:600">${log.colorName}</td>
       <td style="font-family:monospace;font-size:11px">${log.hex}</td>
       <td style="color:#e74c4c;font-family:monospace">${log.r}</td>
       <td style="color:#27ae60;font-family:monospace">${log.g}</td>
       <td style="color:#2980b9;font-family:monospace">${log.b}</td>
-      <td style="font-size:10px;color:var(--accent)">${log.filter||'일반'}</td>
+      <td style="font-size:10px;color:var(--accent)">${log.filter || '일반'}</td>
       <td style="font-size:10px;color:var(--muted)">${log.time}</td>`;
     body.appendChild(tr);
   });
 }
 
 function exportCSV() {
-  if (rgbLog.length===0) { showToast('저장된 기록이 없어요!'); return; }
-  const header='날짜,색상이름,HEX,R,G,B,필터\n';
-  const rows=rgbLog.map(l=>`${l.time},${l.colorName},${l.hex},${l.r},${l.g},${l.b},${l.filter||'일반'}`).join('\n');
-  const blob=new Blob(['\uFEFF'+header+rows],{type:'text/csv;charset=utf-8;'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=`colorscan_rgb_${new Date().toLocaleDateString('ko-KR').replace(/\. /g,'-').replace('.','')}.csv`;
+  triggerVibration();
+  if (rgbLog.length === 0) { showToast('저장된 기록이 없어요!'); return; }
+  const header = '날짜,색상이름,HEX,R,G,B,필터\n';
+  const rows = rgbLog.map(l => `${l.time},${l.colorName},${l.hex},${l.r},${l.g},${l.b},${l.filter || '일반'}`).join('\n');
+  const blob = new Blob(['\uFEFF' + header + rows], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `colorscan_rgb_${new Date().toLocaleDateString('ko-KR').replace(/\. /g, '-').replace('.', '')}.csv`;
   a.click(); showToast('📥 CSV 저장 완료!');
 }
 
 function clearLog() {
-  if (rgbLog.length===0) { showToast('기록이 없어요!'); return; }
+  triggerVibration();
+  if (rgbLog.length === 0) { showToast('기록이 없어요!'); return; }
   if (!confirm(`RGB 기록 ${rgbLog.length}건을 모두 삭제할까요?`)) return;
-  rgbLog=[]; localStorage.removeItem('rgbLog'); renderLog(); showToast('🗑 기록 초기화 완료');
+  rgbLog = []; localStorage.removeItem('rgbLog'); renderLog(); showToast('🗑 기록 초기화 완료');
 }
 
-function showToast(msg) {
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2000);
-}
-
+// ---------------------------
+// 음성 / 손전등 / 색상 판별
+// ---------------------------
 function unlockAudio() {
   if (audioUnlocked) return;
-  try { const u=new SpeechSynthesisUtterance(' '); u.volume=0; window.speechSynthesis.speak(u); audioUnlocked=true; } catch(e) {}
+  try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; window.speechSynthesis.speak(u); audioUnlocked = true; } catch(e) {}
 }
 
 function speak(text) {
-  if (!soundOn||!audioUnlocked) return;
+  if (!soundOn || !audioUnlocked) return;
   window.speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text);
-  u.lang='ko-KR'; u.rate=0.9; u.volume=1;
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ko-KR'; u.rate = 0.9; u.volume = 1;
   window.speechSynthesis.speak(u);
 }
 
 function toggleSound() {
-  soundOn=!soundOn;
-  if (soundOn) { unlockAudio(); setTimeout(()=>speak('음성 안내 시작'),300); }
-  document.getElementById('soundIcon').textContent=soundOn?'🔊':'🔇';
-  document.getElementById('soundLabel').textContent=soundOn?'음성 켜짐':'음성 켜기';
-  document.getElementById('btnSound').classList.toggle('on',soundOn);
+  triggerVibration();
+  soundOn = !soundOn;
+  if (soundOn) { unlockAudio(); setTimeout(() => speak('음성 안내 시작'), 300); }
+  document.getElementById('soundIcon').textContent = soundOn ? '🔊' : '🔇';
+  document.getElementById('soundLabel').textContent = soundOn ? '음성 켜짐' : '음성 켜기';
+  document.getElementById('btnSound').classList.toggle('on', soundOn);
+}
+
+let torchOn = false;
+async function toggleTorch() {
+  triggerVibration();
+  try {
+    const track = video.srcObject?.getVideoTracks()[0];
+    if (!track) return;
+    const capabilities = track.getCapabilities();
+    if (!capabilities.torch) { showToast('이 기기는 손전등을 지원하지 않아요 😢'); return; }
+    torchOn = !torchOn;
+    await track.applyConstraints({ advanced: [{ torch: torchOn }] });
+    const btn = document.getElementById('torchBtn');
+    btn.classList.toggle('on', torchOn);
+    btn.textContent = torchOn ? '💡' : '🔦';
+    showToast(torchOn ? '💡 손전등 켜짐' : '🔦 손전등 꺼짐');
+  } catch(e) { showToast('손전등 사용이 불가능해요 😢'); }
 }
 
 function getColorName(r, g, b) {
-  const max=Math.max(r,g,b), min=Math.min(r,g,b), delta=max-min;
-  const brightness=(r*299+g*587+b*114)/1000;
-  const saturation=max===0?0:delta/max;
-  const lightness=(max+min)/2/255;
-  if (brightness<25) return '검정';
-  if (brightness<55) return '매우 어두운 회색';
-  if (brightness>245&&saturation<0.06) return '흰색';
-  if (brightness>225&&saturation<0.08) return '아이보리';
-  if (saturation<0.08) {
-    if (brightness<80) return '짙은 회색';
-    if (brightness<120) return '어두운 회색';
-    if (brightness<160) return '회색';
-    if (brightness<195) return '밝은 회색';
-    if (brightness<225) return '연회색';
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), delta = max - min;
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  const saturation = max === 0 ? 0 : delta / max;
+  const lightness = (max + min) / 2 / 255;
+  if (brightness < 25) return '검정';
+  if (brightness < 55) return '매우 어두운 회색';
+  if (brightness > 245 && saturation < 0.06) return '흰색';
+  if (brightness > 225 && saturation < 0.08) return '아이보리';
+  if (saturation < 0.08) {
+    if (brightness < 80) return '짙은 회색';
+    if (brightness < 120) return '어두운 회색';
+    if (brightness < 160) return '회색';
+    if (brightness < 195) return '밝은 회색';
+    if (brightness < 225) return '연회색';
     return '흰색에 가까운 회색';
   }
-  if (saturation<0.35&&r>g&&r>b) {
-    if (brightness<60) return '짙은 갈색';
-    if (brightness<100) return '갈색';
-    if (brightness<140) return '황갈색';
-    if (brightness<180) return '카키색';
-    if (brightness<215) return '베이지';
+  if (saturation < 0.35 && r > g && r > b) {
+    if (brightness < 60) return '짙은 갈색';
+    if (brightness < 100) return '갈색';
+    if (brightness < 140) return '황갈색';
+    if (brightness < 180) return '카키색';
+    if (brightness < 215) return '베이지';
     return '크림색';
   }
-  let hue=0;
-  if (max===r) hue=((g-b)/delta)%6;
-  else if (max===g) hue=(b-r)/delta+2;
-  else hue=(r-g)/delta+4;
-  hue=Math.round(hue*60);
-  if (hue<0) hue+=360;
-  const isDark=lightness<0.25, isLight=lightness>0.72, isVibrant=saturation>0.6;
-  if (hue<8||hue>=352) { if (isDark) return '다크 레드'; if (isLight) return '연분홍'; if (isVibrant) return '빨간색'; return '적색'; }
-  if (hue<20) { if (isDark) return '다크 오렌지'; if (isLight) return '살구색'; return '주홍색'; }
-  if (hue<40) { if (isDark) return '진한 주황'; if (isLight) return '복숭아색'; if (isVibrant) return '주황색'; return '오렌지'; }
-  if (hue<55) { if (isDark) return '황토색'; if (isLight) return '연노랑'; return '황금색'; }
-  if (hue<68) { if (isDark) return '올리브색'; if (isLight) return '밝은 노랑'; return '노란색'; }
-  if (hue<85) { if (isDark) return '올리브 그린'; if (isLight) return '연두색'; return '황록색'; }
-  if (hue<140) { if (isDark) return '짙은 초록'; if (isLight) return '민트그린'; if (hue<110) return '풀색'; return '초록색'; }
-  if (hue<175) { if (isDark) return '다크 그린'; if (isLight) return '연한 청록'; return '청록색'; }
-  if (hue<200) { if (isDark) return '짙은 청록'; if (isLight) return '하늘색'; if (isVibrant) return '시안'; return '청록색'; }
-  if (hue<230) { if (isDark) return '짙은 파랑'; if (isLight) return '하늘색'; if (isVibrant) return '파란색'; return '파란색'; }
-  if (hue<255) { if (isDark) return '네이비'; if (isLight) return '연파랑'; if (isVibrant) return '코발트블루'; return '진파랑'; }
-  if (hue<285) { if (isDark) return '짙은 남색'; if (isLight) return '라벤더'; if (isVibrant) return '보라색'; return '남보라'; }
-  if (hue<320) { if (isDark) return '다크 퍼플'; if (isLight) return '연보라'; if (isVibrant) return '보라색'; return '자주색'; }
-  if (hue<345) { if (isDark) return '와인색'; if (isLight) return '핑크'; if (isVibrant) return '마젠타'; return '분홍색'; }
+  let hue = 0;
+  if (max === r) hue = ((g - b) / delta) % 6;
+  else if (max === g) hue = (b - r) / delta + 2;
+  else hue = (r - g) / delta + 4;
+  hue = Math.round(hue * 60);
+  if (hue < 0) hue += 360;
+  const isDark = lightness < 0.25, isLight = lightness > 0.72, isVibrant = saturation > 0.6;
+  if (hue < 8 || hue >= 352)  { if (isDark) return '다크 레드';    if (isLight) return '연분홍';      if (isVibrant) return '빨간색';    return '적색'; }
+  if (hue < 20)                { if (isDark) return '다크 오렌지';  if (isLight) return '살구색';      return '주홍색'; }
+  if (hue < 40)                { if (isDark) return '진한 주황';    if (isLight) return '복숭아색';    if (isVibrant) return '주황색';    return '오렌지'; }
+  if (hue < 55)                { if (isDark) return '황토색';       if (isLight) return '연노랑';      return '황금색'; }
+  if (hue < 68)                { if (isDark) return '올리브색';     if (isLight) return '밝은 노랑';   return '노란색'; }
+  if (hue < 85)                { if (isDark) return '올리브 그린';  if (isLight) return '연두색';      return '황록색'; }
+  if (hue < 140)               { if (isDark) return '짙은 초록';   if (isLight) return '민트그린';    if (hue < 110) return '풀색'; return '초록색'; }
+  if (hue < 175)               { if (isDark) return '다크 그린';   if (isLight) return '연한 청록';   return '청록색'; }
+  if (hue < 200)               { if (isDark) return '짙은 청록';   if (isLight) return '하늘색';      if (isVibrant) return '시안'; return '청록색'; }
+  if (hue < 230)               { if (isDark) return '짙은 파랑';   if (isLight) return '하늘색';      if (isVibrant) return '파란색';    return '파란색'; }
+  if (hue < 255)               { if (isDark) return '네이비';       if (isLight) return '연파랑';      if (isVibrant) return '코발트블루'; return '진파랑'; }
+  if (hue < 285)               { if (isDark) return '짙은 남색';   if (isLight) return '라벤더';      if (isVibrant) return '보라색';    return '남보라'; }
+  if (hue < 320)               { if (isDark) return '다크 퍼플';   if (isLight) return '연보라';      if (isVibrant) return '보라색';    return '자주색'; }
+  if (hue < 345)               { if (isDark) return '와인색';       if (isLight) return '핑크';        if (isVibrant) return '마젠타';    return '분홍색'; }
   return '알수없음';
-}
-
-let torchOn=false;
-async function toggleTorch() {
-  try {
-    const track=video.srcObject?.getVideoTracks()[0];
-    if (!track) return;
-    const capabilities=track.getCapabilities();
-    if (!capabilities.torch) { showToast('이 기기는 손전등을 지원하지 않아요 😢'); return; }
-    torchOn=!torchOn;
-    await track.applyConstraints({advanced:[{torch:torchOn}]});
-    const btn=document.getElementById('torchBtn');
-    btn.classList.toggle('on',torchOn);
-    btn.textContent=torchOn?'💡':'🔦';
-    showToast(torchOn?'💡 손전등 켜짐':'🔦 손전등 꺼짐');
-  } catch(e) { showToast('손전등 사용이 불가능해요 😢'); }
 }
 </script>
 </body>
