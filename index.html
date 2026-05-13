@@ -280,17 +280,18 @@
         <button class="btn-admin-login" id="adminLoginBtn" onclick="toggleAdmin()">🔒 관리자</button>
       </div>
     </div>
-    <!-- 누구나 열람 가능 -->
-    <div class="rgb-log-empty" id="logEmpty">아직 기록이 없어요<br>사진을 찍으면 자동 저장돼요!</div>
-    <div class="rgb-log-table-wrap" id="logTableWrap" style="display:none;">
-      <table class="rgb-log-table">
-        <thead><tr><th>색상</th><th>이름</th><th>HEX</th><th>R</th><th>G</th><th>B</th><th>필터</th><th>시간</th></tr></thead>
-        <tbody id="logTableBody"></tbody>
-      </table>
-    </div>
-    <!-- 관리자 전용 버튼 -->
-    <div id="adminPanel" style="display:none;border-top:1px solid var(--border);">
-      <div style="padding:10px 16px 12px;display:flex;gap:6px;justify-content:flex-end;">
+    <!-- 일반 사용자: 잠김 메시지 -->
+    <div id="logLockedMsg" style="padding:24px 16px;text-align:center;color:var(--muted);font-size:13px;">🔒 관리자만 기록을 열람할 수 있어요</div>
+    <!-- 관리자 전용 패널 -->
+    <div id="adminPanel" style="display:none;">
+      <div class="rgb-log-empty" id="logEmpty">아직 기록이 없어요<br>사진을 찍으면 자동 저장돼요!</div>
+      <div class="rgb-log-table-wrap" id="logTableWrap" style="display:none;">
+        <table class="rgb-log-table">
+          <thead><tr><th>색상</th><th>이름</th><th>HEX</th><th>R</th><th>G</th><th>B</th><th>필터</th><th>시간</th></tr></thead>
+          <tbody id="logTableBody"></tbody>
+        </table>
+      </div>
+      <div style="padding:10px 16px 12px;display:flex;gap:6px;justify-content:flex-end;border-top:1px solid var(--border);">
         <button class="btn-csv" onclick="exportCSV()">📥 CSV 저장</button>
         <button class="btn-clear-log" onclick="clearLog()">🗑 초기화</button>
       </div>
@@ -690,6 +691,7 @@ function toggleAdmin() {
   if (isAdmin) {
     isAdmin = false;
     document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('logLockedMsg').style.display = 'block';
     document.getElementById('adminLoginBtn').textContent = '🔒 관리자';
     document.getElementById('adminLoginBtn').classList.remove('on');
     showToast('🔒 로그아웃'); return;
@@ -698,9 +700,11 @@ function toggleAdmin() {
   if (pw === null) return;
   if (pw === ADMIN_PW) {
     isAdmin = true;
+    document.getElementById('logLockedMsg').style.display = 'none';
     document.getElementById('adminPanel').style.display = 'block';
     document.getElementById('adminLoginBtn').textContent = '🔓 로그아웃';
     document.getElementById('adminLoginBtn').classList.add('on');
+    renderLog();
     showToast('🔓 로그인 성공!');
   } else { showToast('❌ 비밀번호 불일치'); }
 }
