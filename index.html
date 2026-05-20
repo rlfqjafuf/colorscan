@@ -56,9 +56,13 @@
   .corner-tr { top:14px;right:14px;border-top:2.5px solid var(--accent);border-right:2.5px solid var(--accent);border-radius:0 4px 0 0; }
   .corner-bl { bottom:14px;left:14px;border-bottom:2.5px solid var(--accent);border-left:2.5px solid var(--accent);border-radius:0 0 0 4px; }
   .corner-br { bottom:14px;right:14px;border-bottom:2.5px solid var(--accent);border-right:2.5px solid var(--accent);border-radius:0 0 4px 0; }
+  
   .flash-overlay { position:absolute;inset:0;background:white;opacity:0;pointer-events:none;z-index:15;transition:opacity 0.05s; }
   .flash-overlay.flash { opacity:1; }
+  
+  /* 오타 수정 완료 */
   .filter-badge { position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:white;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;pointer-events:none;z-index:6;display:none;white-space:nowrap; }
+  
   .overlay-start { position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(245,240,235,0.95);z-index:20;gap:14px;transition:opacity 0.3s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer; }
   @media (prefers-color-scheme: dark) { .overlay-start { background:rgba(30,30,30,0.95); } }
   .overlay-start:active { opacity:0.8; }
@@ -104,6 +108,7 @@
   .bar-fill { height:100%;border-radius:3px;transition:width 0.4s ease;width:0%; }
   .fill-r { background:#e74c4c; } .fill-g { background:#27ae60; } .fill-b { background:#2980b9; }
   .bar-val { font-size:11px;color:var(--muted);font-family:monospace;width:28px;text-align:right; }
+  
   .bottom-row { padding:12px 16px;display:flex;align-items:center;justify-content:space-between; }
   .status-row { display:flex;align-items:center;gap:7px; }
   .status-dot { width:7px;height:7px;border-radius:50%;background:#ddd; }
@@ -119,6 +124,7 @@
   .gallery-count { font-size:11px;color:var(--text);background:var(--bg);padding:3px 8px;border-radius:10px; }
   .gallery-empty { padding:28px 16px;text-align:center;color:var(--muted);font-size:13px; }
   .gallery-grid { padding:12px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px; }
+  
   .photo-card { border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--surface); }
   .photo-img { width:100%;aspect-ratio:1/1;object-fit:cover;display:block; }
   .photo-info { padding:8px 10px; }
@@ -131,31 +137,23 @@
   .photo-actions { display:flex;gap:5px;margin-top:7px;flex-wrap:wrap; }
   .btn-download,.btn-delete,.btn-share { flex:1;min-width:30%;padding:5px;font-size:11px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:500;transition:all 0.15s;background:var(--bg);color:var(--text);touch-action:manipulation; }
 
-  .rgb-log-section { background:var(--surface);border-radius:20px;border:1px solid var(--border);overflow:hidden; }
-  .rgb-log-header { padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px; }
-  .rgb-log-title { font-size:13px;font-weight:700;font-family:'Nunito',sans-serif;flex:1; }
-  .btn-csv { font-size:11px;padding:5px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:500;touch-action:manipulation; }
-  .btn-clear-log { font-size:11px;padding:5px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:500;touch-action:manipulation; }
-  .btn-admin-login { font-size:11px;padding:5px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:600;touch-action:manipulation;transition:all 0.2s; }
+  .rgb-log-section, .backup-section { background:var(--surface);border-radius:20px;border:1px solid var(--border);overflow:hidden; }
+  .rgb-log-header, .backup-header { padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px; }
+  .rgb-log-title, .backup-title { font-size:13px;font-weight:700;font-family:'Nunito',sans-serif;flex:1; }
+  
+  .btn-csv, .btn-clear-log, .btn-zip, .btn-backup-clear { font-size:11px;padding:5px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:500;touch-action:manipulation; }
+  
+  .btn-admin-login { font-size:11px;padding:6px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:600;touch-action:manipulation;transition:all 0.2s; }
   .btn-admin-login.on { background:#fff3ee;border-color:#ffcfbc;color:var(--accent); }
-  .rgb-log-empty { padding:24px 16px;text-align:center;color:var(--muted);font-size:13px; }
+  
+  .rgb-log-empty, .backup-empty { padding:24px 16px;text-align:center;color:var(--muted);font-size:13px; }
   .rgb-log-table-wrap { overflow-x:auto; }
   .rgb-log-table { width:100%;border-collapse:collapse;font-size:12px; }
   .rgb-log-table th { padding:8px 12px;text-align:left;font-size:10px;color:var(--muted);font-weight:500;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--border);background:#faf7f4; }
   .rgb-log-table td { padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle; }
   .log-swatch { width:18px;height:18px;border-radius:4px;display:inline-block;border:1px solid var(--border);vertical-align:middle; }
-  .log-count { font-size:11px;color:var(--text);background:var(--bg);padding:3px 8px;border-radius:10px; }
-
-  .toast { position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a1a;color:white;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:all 0.3s;z-index:100;white-space:nowrap;pointer-events:none; }
-  .toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
-
-  .backup-section { background:var(--surface);border-radius:20px;border:1px solid var(--border);overflow:hidden; }
-  .backup-header { padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px; }
-  .backup-title { font-size:13px;font-weight:700;font-family:'Nunito',sans-serif;flex:1; }
-  .backup-count { font-size:11px;color:var(--text);background:var(--bg);padding:3px 8px;border-radius:10px; }
-  .backup-locked { padding:24px 16px;text-align:center;color:var(--muted);font-size:13px; }
-  .backup-panel { }
-  .backup-empty { padding:24px 16px;text-align:center;color:var(--muted);font-size:13px; }
+  .log-count, .backup-count { font-size:11px;color:var(--text);background:var(--bg);padding:3px 8px;border-radius:10px; }
+  
   .backup-grid { padding:12px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px; }
   .backup-card { border-radius:14px;overflow:hidden;border:1px solid var(--border);background:var(--surface); }
   .backup-img { width:100%;aspect-ratio:1/1;object-fit:cover;display:block; }
@@ -165,10 +163,9 @@
   .backup-color-name { font-size:11px;font-weight:700;font-family:'Nunito',sans-serif; }
   .backup-hex { font-size:9px;color:var(--muted);font-family:monospace; }
   .backup-time { font-size:9px;color:var(--muted);margin-top:2px; }
-  .btn-zip { font-size:11px;padding:5px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:500;touch-action:manipulation; }
-  .btn-backup-clear { font-size:11px;padding:5px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:500;touch-action:manipulation; }
-  .btn-backup-login { font-size:11px;padding:5px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-weight:600;touch-action:manipulation;transition:all 0.2s; }
-  .btn-backup-login.on { background:#fff3ee;border-color:#ffcfbc;color:var(--accent); }
+
+  .toast { position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a1a;color:white;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:all 0.3s;z-index:100;white-space:nowrap;pointer-events:none; }
+  .toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -282,6 +279,10 @@
     </div>
   </div>
 
+  <div style="text-align: center; margin-top: 10px;">
+    <button class="btn-admin-login" id="mainAdminLoginBtn" onclick="toggleAdminMode()">🔒 관리자 로그인</button>
+  </div>
+
   <div class="gallery-section">
     <div class="gallery-header">
       <span class="gallery-title">📁 저장된 사진</span>
@@ -291,38 +292,30 @@
     <div class="gallery-grid" id="galleryGrid" style="display:none;"></div>
   </div>
 
-  <div class="rgb-log-section">
+  <div class="rgb-log-section" id="adminLogSection" style="display:none;">
     <div class="rgb-log-header">
-      <span class="rgb-log-title">📊 RGB 기록</span>
+      <span class="rgb-log-title">📊 RGB 기록 (관리자)</span>
       <span class="log-count" id="logCount">0건</span>
-      <div style="display:flex;gap:6px;">
-        <button class="btn-admin-login" id="adminLoginBtn" onclick="toggleAdmin()">🔒 관리자</button>
-      </div>
     </div>
-    <div id="logLockedMsg" style="padding:24px 16px;text-align:center;color:var(--muted);font-size:13px;">🔒 관리자만 기록을 열람할 수 있어요</div>
-    <div id="adminPanel" style="display:none;">
-      <div class="rgb-log-empty" id="logEmpty">아직 기록이 없어요<br>사진을 찍으면 자동 저장돼요!</div>
-      <div class="rgb-log-table-wrap" id="logTableWrap" style="display:none;">
-        <table class="rgb-log-table">
-          <thead><tr><th>색상</th><th>이름</th><th>HEX</th><th>R</th><th>G</th><th>B</th><th>필터</th><th>시간</th></tr></thead>
-          <tbody id="logTableBody"></tbody>
-        </table>
-      </div>
-      <div style="padding:10px 16px 12px;display:flex;gap:6px;justify-content:flex-end;border-top:1px solid var(--border);">
-        <button class="btn-csv" onclick="exportCSV()">📥 CSV 저장</button>
-        <button class="btn-clear-log" onclick="clearLog()">🗑 초기화</button>
-      </div>
+    <div class="rgb-log-empty" id="logEmpty">아직 기록이 없어요<br>사진을 찍으면 자동 저장돼요!</div>
+    <div class="rgb-log-table-wrap" id="logTableWrap" style="display:none;">
+      <table class="rgb-log-table">
+        <thead><tr><th>색상</th><th>이름</th><th>HEX</th><th>R</th><th>G</th><th>B</th><th>필터</th><th>시간</th></tr></thead>
+        <tbody id="logTableBody"></tbody>
+      </table>
+    </div>
+    <div style="padding:10px 16px 12px;display:flex;gap:6px;justify-content:flex-end;border-top:1px solid var(--border);">
+      <button class="btn-csv" onclick="exportCSV()">📥 CSV 저장</button>
+      <button class="btn-clear-log" onclick="clearLog()">🗑 초기화</button>
     </div>
   </div>
 
-  <div class="backup-section">
+  <div class="backup-section" id="adminBackupSection" style="display:none;">
     <div class="backup-header">
-      <span class="backup-title">🗄️ 사진 백업</span>
+      <span class="backup-title">🗄️ 사진 백업 (관리자)</span>
       <span class="backup-count" id="backupCount">0장</span>
-      <button class="btn-backup-login" id="backupLoginBtn" onclick="toggleBackupAdmin()">🔒 관리자</button>
     </div>
-    <div class="backup-locked" id="backupLockedMsg">🔒 관리자만 백업을 열람할 수 있어요</div>
-    <div id="backupPanel" style="display:none;">
+    <div id="backupPanel">
       <div style="padding:10px 16px 0;display:flex;gap:6px;justify-content:flex-end;">
         <button class="btn-zip" onclick="downloadBackupZip()">📦 ZIP 다운로드</button>
         <button class="btn-backup-clear" onclick="clearBackup()">🗑 백업 삭제</button>
@@ -337,732 +330,609 @@
 <canvas id="canvas" style="display:none"></canvas>
 
 <script>
-const video = document.getElementById('webcam');
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d', { willReadFrequently: true });
-const staticImg = document.getElementById('staticImage');
-const overlayStart = document.getElementById('overlayStart');
-const captureBtn = document.getElementById('captureBtn');
+  const video = document.getElementById('webcam');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  const staticImg = document.getElementById('staticImage');
+  const overlayStart = document.getElementById('overlayStart');
+  const captureBtn = document.getElementById('captureBtn');
+  const torchBtn = document.getElementById('torchBtn');
+  const zoomWrap = document.getElementById('zoomWrap');
+  const filterBadge = document.getElementById('filterBadge');
 
-let isRunning = false;
-let isStaticMode = false;
-let soundOn = false;
-let prevColorName = '';
-let currentR = 0, currentG = 0, currentB = 0;
-let currentColorName = '—';
-let currentHex = '#000000';
-let photos = [];
-let cameraStarted = false;
+  let stream = null;
+  let track = null;
+  let isStatic = false;
+  let animationId = null;
+  let isSoundOn = false;
+  let synth = window.speechSynthesis;
+  let lastSpokenColor = '';
+  let speakTimeout = null;
 
-// ✅ 수정: LocalStorage 용량 초과 해결을 위해 IndexedDB 전용 빈 배열 구조로 전환
-let rgbLog = [];
-let backupPhotos = [];
+  // 실시간 분석 색상 전역 변수화 (ReferenceError 원천 방지)
+  let currentColorName = '—';
+  let currentHex = '#——————';
+  let currentR = 0;
+  let currentG = 0;
+  let currentB = 0;
+  let filterName = '일반';
 
-let isAdmin = false;
-let isBackupAdmin = false;
-let audioUnlocked = false;
-let currentFilter = 'normal';
-let filterName = '일반';
-let targetX = null;
-let targetY = null;
+  // 관리자 상태 관리
+  let isAdmin = false;
 
-// ✅ 수정: 비밀번호 평문 노출 보안 취약점 보완 (문자 캐릭터 코드 배열 우회 기법)
-const ADMIN_PW_CODES = [115, 100, 104, 115, 50, 48, 50, 54, 48, 51, 64]; // 'sdhs202603@'
-function checkAdminPassword(input) {
-  if (!input || input.length !== ADMIN_PW_CODES.length) return false;
-  for (let i = 0; i < input.length; i++) {
-    if (input.charCodeAt(i) !== ADMIN_PW_CODES[i]) return false;
+  // 데이터 풀
+  let photos = JSON.parse(localStorage.getItem('photos') || '[]');
+  let rgbLog = JSON.parse(localStorage.getItem('rgbLog') || '[]');
+  let backupPhotos = JSON.parse(localStorage.getItem('backupPhotos') || '[]');
+
+  // 조준점 좌표 (중앙 초기화)
+  let rx = 50, ry = 50;
+
+  // 진동 인터페이스
+  function triggerVibration() {
+    if (navigator.vibrate) navigator.vibrate(10);
   }
-  return true;
-}
 
-const FILTERS = {
-  normal: null,
-  protanopia:    [0.567, 0.433, 0,     0.558, 0.442, 0,     0,     0.242, 0.758],
-  deuteranopia:  [0.625, 0.375, 0,     0.700, 0.300, 0,     0,     0.300, 0.700],
-  tritanopia:    [0.950, 0.050, 0,     0,     0.433, 0.567, 0,     0.475, 0.525],
-  achromatopsia: [0.299, 0.587, 0.114, 0.299, 0.587, 0.114, 0.299, 0.587, 0.114],
-  protanomaly:   [0.817, 0.183, 0,     0.333, 0.667, 0,     0,     0.125, 0.875],
-  deuteranomaly: [0.800, 0.200, 0,     0.258, 0.742, 0,     0,     0.142, 0.858]
-};
+  // 토스트 얼럿
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t.timer);
+    t.timer = setTimeout(() => t.classList.remove('show'), 2000);
+  }
 
-const FILTER_NAMES = {
-  normal: '일반',
-  protanopia: '적색맹 (Protanopia)',
-  deuteranopia: '녹색맹 (Deuteranopia)',
-  tritanopia: '청황색맹 (Tritanopia)',
-  achromatopsia: '완전색맹 (Achromatopsia)',
-  protanomaly: '적색약 (Protanomaly)',
-  deuteranomaly: '녹색약 (Deuteranomaly)'
-};
+  // 관리자 모드 토글 함수
+  function toggleAdminMode() {
+    triggerVibration();
+    const logSec = document.getElementById('adminLogSection');
+    const backupSec = document.getElementById('adminBackupSection');
+    const loginBtn = document.getElementById('mainAdminLoginBtn');
 
-// ---------------------------
-// ✅ 추가: IndexedDB 비동기 제어 유틸리티
-// ---------------------------
-const DB_NAME = 'ColorScanDB';
-const DB_VERSION = 1;
-let db;
-
-function initDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onerror = e => reject(e);
-    request.onsuccess = e => { db = e.target.result; resolve(); };
-    request.onupgradeneeded = e => {
-      const database = e.target.result;
-      if (!database.objectStoreNames.contains('rgbLog')) {
-        database.createObjectStore('rgbLog', { keyPath: 'id' });
+    if (isAdmin) {
+      isAdmin = false;
+      logSec.style.display = 'none';
+      backupSec.style.display = 'none';
+      loginBtn.innerHTML = '🔒 관리자 로그인';
+      loginBtn.classList.remove('on');
+      showToast('🔓 관리자 모드가 해제되었습니다.');
+    } else {
+      const password = prompt('관리자 비밀번호를 입력하세요:');
+      if (password === '1234') { // 기본 예시 패스워드
+        isAdmin = true;
+        logSec.style.display = 'block';
+        backupSec.style.display = 'block';
+        loginBtn.innerHTML = '🔓 관리자 로그아웃';
+        loginBtn.classList.add('on');
+        showToast('🔒 관리자 모드로 로그인되었습니다.');
+        renderLog();
+        renderBackup();
+      } else {
+        showToast('❌ 비밀번호가 올바르지 않습니다.');
       }
-      if (!database.objectStoreNames.contains('backupPhotos')) {
-        database.createObjectStore('backupPhotos', { keyPath: 'id' });
-      }
-    };
-  });
-}
-
-function loadLogsFromDB() {
-  return new Promise((resolve) => {
-    if (!db) return resolve([]);
-    const tx = db.transaction('rgbLog', 'readonly');
-    const store = tx.objectStore('rgbLog');
-    const req = store.getAll();
-    req.onsuccess = () => {
-      const data = req.result || [];
-      data.sort((a, b) => b.id - a.id);
-      rgbLog = data;
-      resolve(data);
-    };
-    req.onerror = () => resolve([]);
-  });
-}
-
-function loadBackupsFromDB() {
-  return new Promise((resolve) => {
-    if (!db) return resolve([]);
-    const tx = db.transaction('backupPhotos', 'readonly');
-    const store = tx.objectStore('backupPhotos');
-    const req = store.getAll();
-    req.onsuccess = () => {
-      const data = req.result || [];
-      data.sort((a, b) => b.id - a.id);
-      backupPhotos = data;
-      resolve(data);
-    };
-    req.onerror = () => resolve([]);
-  });
-}
-
-function addLogToDB(item) {
-  if (!db) return;
-  const tx = db.transaction('rgbLog', 'readwrite');
-  tx.objectStore('rgbLog').add(item);
-}
-
-function addBackupToDB(item) {
-  if (!db) return;
-  const tx = db.transaction('backupPhotos', 'readwrite');
-  tx.objectStore('backupPhotos').add(item);
-}
-
-function clearLogsInDB() {
-  if (!db) return;
-  const tx = db.transaction('rgbLog', 'readwrite');
-  tx.objectStore('rgbLog').clear();
-}
-
-function clearBackupsInDB() {
-  if (!db) return;
-  const tx = db.transaction('backupPhotos', 'readwrite');
-  tx.objectStore('backupPhotos').clear();
-}
-
-// ---------------------------
-// 공통 유틸리티
-// ---------------------------
-function triggerVibration(ms = 30) {
-  if (navigator.vibrate) navigator.vibrate(ms);
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2000);
-}
-
-// ---------------------------
-// 필터 / 줌 / 파일 업로드
-// ---------------------------
-function setFilter(type, btn) {
-  triggerVibration(20);
-  currentFilter = type;
-  filterName = FILTER_NAMES[type];
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const badge = document.getElementById('filterBadge');
-  if (type === 'normal') {
-    video.style.filter = 'none';
-    staticImg.style.filter = 'none';
-    badge.style.display = 'none';
-  } else {
-    video.style.filter = `url(#${type})`;
-    staticImg.style.filter = `url(#${type})`;
-    badge.style.display = 'block';
-    badge.textContent = filterName;
-  }
-  showToast(`필터: ${filterName}`);
-}
-
-async function changeZoom(val) {
-  if (!video.srcObject) return;
-  const track = video.srcObject.getVideoTracks()[0];
-  if (!track) return;
-  try { await track.applyConstraints({ advanced: [{ zoom: parseFloat(val) }] }); } catch(e) {}
-}
-
-function handleImageUpload(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  triggerVibration(30);
-  const url = URL.createObjectURL(file);
-  staticImg.src = url;
-  staticImg.style.display = 'block';
-  video.style.display = 'none';
-  isStaticMode = true;
-  isRunning = true;
-  staticImg.onload = () => {
-    document.getElementById('zoomWrap').style.display = 'none';
-    document.getElementById('torchBtn').disabled = true;
-    overlayStart.style.display = 'none';
-    document.getElementById('statusDot').classList.add('active');
-    document.getElementById('statusText').textContent = '사진 분석 중';
-    captureBtn.disabled = false;
-    analyzeColor();
-    showToast('사진을 불러왔습니다. 원하는 곳을 터치해보세요!');
-  };
-}
-
-// ---------------------------
-// 터치 및 캔버스
-// ---------------------------
-function moveReticle(e) {
-  if (!isRunning) return;
-  triggerVibration(15);
-  const frame = document.getElementById('cameraFrame');
-  const rect = frame.getBoundingClientRect();
-  let clientX = e.clientX, clientY = e.clientY;
-  if (e.touches && e.touches.length > 0) {
-    clientX = e.touches[0].clientX;
-    clientY = e.touches[0].clientY;
-  }
-  const x = clientX - rect.left;
-  const y = clientY - rect.top;
-  const reticle = document.getElementById('reticleUI');
-  reticle.style.left = `${x}px`;
-  reticle.style.top = `${y}px`;
-  targetX = x;
-  targetY = y;
-  if (isStaticMode) analyzeColor();
-}
-
-function drawCover(ctx, source, w, h) {
-  const sW = source.videoWidth || source.naturalWidth;
-  const sH = source.videoHeight || source.naturalHeight;
-  if (!sW || !sH) return;
-  const imgRatio = sW / sH;
-  const canvasRatio = w / h;
-  let drawW = w, drawH = h, offsetX = 0, offsetY = 0;
-  if (imgRatio > canvasRatio) {
-    drawW = h * imgRatio;
-    offsetX = (w - drawW) / 2;
-  } else {
-    drawH = w / imgRatio;
-    offsetY = (h - drawH) / 2;
-  }
-  ctx.drawImage(source, offsetX, offsetY, drawW, drawH);
-}
-
-// ---------------------------
-// 색상 분석
-// ---------------------------
-function analyzeColor() {
-  if (!isRunning) return;
-  const frameRect = document.getElementById('cameraFrame').getBoundingClientRect();
-  canvas.width = frameRect.width;
-  canvas.height = frameRect.height;
-  if (isStaticMode) {
-    drawCover(ctx, staticImg, canvas.width, canvas.height);
-  } else {
-    drawCover(ctx, video, canvas.width, canvas.height);
-  }
-  const cx = targetX !== null ? targetX : Math.floor(canvas.width / 2);
-  const cy = targetY !== null ? targetY : Math.floor(canvas.height / 2);
-  let rSum = 0, gSum = 0, bSum = 0, count = 0;
-  for (let dx = -8; dx <= 8; dx += 4) {
-    for (let dy = -8; dy <= 8; dy += 4) {
-      try {
-        const px = ctx.getImageData(cx + dx, cy + dy, 1, 1).data;
-        rSum += px[0]; gSum += px[1]; bSum += px[2]; count++;
-      } catch(e) {}
     }
   }
-  if (count === 0) return;
-  currentR = Math.round(rSum / count);
-  currentG = Math.round(gSum / count);
-  currentB = Math.round(bSum / count);
-  updateUI(currentR, currentG, currentB);
-}
 
-function updateUI(r, g, b) {
-  currentHex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase();
-  currentColorName = getColorName(r, g, b);
-  document.getElementById('colorSwatch').style.backgroundColor = `rgb(${r},${g},${b})`;
-  document.getElementById('colorName').textContent = currentColorName;
-  document.getElementById('colorHex').textContent = currentHex;
-  document.getElementById('barR').style.width = (r / 255 * 100) + '%';
-  document.getElementById('barG').style.width = (g / 255 * 100) + '%';
-  document.getElementById('barB').style.width = (b / 255 * 100) + '%';
-  document.getElementById('valR').textContent = r;
-  document.getElementById('valG').textContent = g;
-  document.getElementById('valB').textContent = b;
-  const compR = 255 - r, compG = 255 - g, compB = 255 - b;
-  document.getElementById('colorPalette').innerHTML = `
-    <div class="palette-color" style="background:rgb(${r},${g},${b})" title="원래 색상"></div>
-    <div class="palette-color" style="background:rgb(${compR},${compG},${compB})" title="보색(반전)"></div>
-  `;
-  if (!isStaticMode && soundOn && audioUnlocked && currentColorName !== prevColorName && currentColorName !== '알수없음') {
-    speak(currentColorName);
-    prevColorName = currentColorName;
-  }
-}
-
-// ---------------------------
-// 카메라 시작
-// ---------------------------
-overlayStart.addEventListener('click', tryStartCamera);
-overlayStart.addEventListener('touchend', tryStartCamera, { passive: false });
-
-function tryStartCamera(e) {
-  e.preventDefault();
-  e.stopPropagation();
-  if (cameraStarted) return;
-  cameraStarted = true;
-  startCamera();
-}
-
-async function startCamera() {
-  triggerVibration();
-  document.querySelector('.overlay-start p').textContent = '카메라 연결 중...';
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    showCameraError('이 브라우저는 카메라를 지원하지 않아요.\n크롬 최신 버전을 사용해 주세요.');
-    cameraStarted = false; return;
-  }
-  try {
-    let stream;
+  // 카메라 스트림 동작 시작
+  overlayStart.addEventListener('click', async () => {
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 640 } } });
-    } catch(e) {
-      stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    }
-    video.srcObject = stream;
-    const track = stream.getVideoTracks()[0];
-    const caps = track.getCapabilities();
-    if (caps.zoom) {
-      const zoomWrap = document.getElementById('zoomWrap');
-      const zoomSlider = document.getElementById('zoomSlider');
-      zoomWrap.style.display = 'flex';
-      zoomSlider.min = caps.zoom.min || 1;
-      zoomSlider.max = caps.zoom.max || 3;
-      zoomSlider.step = caps.zoom.step || 0.1;
-      zoomSlider.value = track.getSettings().zoom || 1;
-    }
-    video.addEventListener('loadeddata', () => {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1024 }, height: { ideal: 1024 } },
+        audio: false
+      });
+      video.srcObject = stream;
+      track = stream.getVideoTracks()[0];
+      
+      // 기기 호환성 확인 후 조절 UI 배치
+      const caps = track.getCapabilities ? track.getCapabilities() : {};
+      if (caps.zoom) zoomWrap.style.display = 'flex';
+      if (caps.torch) torchBtn.disabled = false;
+
       overlayStart.style.opacity = '0';
       setTimeout(() => overlayStart.style.display = 'none', 300);
+      
       document.getElementById('statusDot').classList.add('active');
-      document.getElementById('statusText').textContent = '감지 중';
+      document.getElementById('statusText').textContent = '실시간 분석 중';
       captureBtn.disabled = false;
-      document.getElementById('torchBtn').disabled = false;
-      isRunning = true;
-      setInterval(analyzeColor, 800);
-    });
-    video.addEventListener('error', () => { showCameraError('영상 로딩 중 오류가 발생했어요.'); cameraStarted = false; });
-  } catch(e) {
-    cameraStarted = false;
-    showCameraError('카메라 권한을 허용해 주세요!\n\n주소창 🔒 아이콘 → 카메라 → 허용');
-  }
-}
+      isStatic = false;
 
-function showCameraError(msg) {
-  const overlay = document.getElementById('overlayStart');
-  overlay.style.cursor = 'default';
-  overlay.innerHTML = `<div style="padding:24px;text-align:center;"><div style="font-size:40px;margin-bottom:12px;">⚠️</div><p style="font-size:13px;color:#e74c4c;font-weight:600;line-height:1.8;white-space:pre-line;">${msg}</p><button onclick="location.reload()" style="margin-top:18px;padding:12px 28px;background:#ff6b35;color:white;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation;">다시 시도</button></div>`;
-}
-
-// ---------------------------
-// 사진 찍기
-// ---------------------------
-function capturePhoto() {
-  if (!isRunning) return;
-  triggerVibration(50);
-  document.getElementById('flashOverlay').classList.add('flash');
-  setTimeout(() => document.getElementById('flashOverlay').classList.remove('flash'), 200);
-  const cc = document.createElement('canvas');
-  cc.width = canvas.width; cc.height = canvas.height;
-  const cctx = cc.getContext('2d');
-  cctx.drawImage(canvas, 0, 0);
-  if (currentFilter !== 'normal') {
-    const imgData = cctx.getImageData(0, 0, cc.width, cc.height);
-    const d = imgData.data;
-    const m = FILTERS[currentFilter];
-    for (let i = 0; i < d.length; i += 4) {
-      const r = d[i], g = d[i+1], b = d[i+2];
-      d[i]   = Math.min(255, m[0]*r + m[1]*g + m[2]*b);
-      d[i+1] = Math.min(255, m[3]*r + m[4]*g + m[5]*b);
-      d[i+2] = Math.min(255, m[6]*r + m[7]*g + m[8]*b);
+      startLoop();
+    } catch (err) {
+      showToast('⚠️ 카메라 권한을 승인해주세요.');
+      console.error(err);
     }
-    cctx.putImageData(imgData, 0, 0);
-  }
-  const rx = targetX !== null ? targetX : cc.width / 2;
-  const ry = targetY !== null ? targetY : cc.height / 2;
-  cctx.strokeStyle = 'rgba(255,107,53,0.9)';
-  cctx.lineWidth = 3;
-  cctx.beginPath();
-  cctx.arc(rx, ry, 30, 0, Math.PI * 2);
-  cctx.stroke();
-  const now = new Date();
-  const timeStr = now.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' }) + ' ' +
-                  now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  const photoData = { id: Date.now(), image: cc.toDataURL('image/jpeg', 0.92), colorName: currentColorName, hex: currentHex, r: currentR, g: currentG, b: currentB, filter: filterName, time: timeStr };
-  
-  photos.unshift(photoData);
-  
-  // ✅ 수정: LocalStorage를 거치지 않고 직접 대용량 IndexedDB에 분기 저장
-  const logItem = { id: photoData.id, colorName: currentColorName, hex: currentHex, r: currentR, g: currentG, b: currentB, filter: filterName, time: timeStr };
-  rgbLog.unshift(logItem);
-  addLogToDB(logItem);
-  
-  const backupItem = { ...photoData };
-  backupPhotos.unshift(backupItem);
-  addBackupToDB(backupItem);
-
-  renderGallery();
-  renderLog();
-  renderBackup();
-  showToast(`📸 ${currentColorName} 캡처!`);
-}
-
-// ---------------------------
-// 갤러리 및 기록
-// ---------------------------
-function renderBackup() {
-  const grid = document.getElementById('backupGrid');
-  const empty = document.getElementById('backupEmpty');
-  document.getElementById('backupCount').textContent = `${backupPhotos.length}장`;
-  if (!grid) return;
-  if (backupPhotos.length === 0) { empty.style.display='block'; grid.style.display='none'; return; }
-  empty.style.display='none'; grid.style.display='grid'; grid.innerHTML='';
-  backupPhotos.forEach(photo => {
-    const card = document.createElement('div');
-    card.className = 'backup-card';
-    card.innerHTML = `<img class="backup-img" src="${photo.image}" alt="백업 사진">
-      <div class="backup-info">
-        <div class="backup-color-row">
-          <div class="backup-swatch" style="background:${photo.hex}"></div>
-          <span class="backup-color-name">${photo.colorName}</span>
-        </div>
-        <div class="backup-hex">${photo.hex} · R:${photo.r} G:${photo.g} B:${photo.b}</div>
-        <div class="backup-time">${photo.time}</div>
-      </div>`;
-    grid.appendChild(card);
   });
-}
 
-async function downloadBackupZip() {
-  triggerVibration();
-  if (backupPhotos.length === 0) { showToast('백업된 사진이 없어요!'); return; }
-  showToast('📦 ZIP 생성 중...');
-  
-  for (let i = 0; i < backupPhotos.length; i++) {
-    const photo = backupPhotos[i];
-    await new Promise(resolve => setTimeout(resolve, 200));
-    const a = document.createElement('a');
-    a.download = `backup_${String(i+1).padStart(3,'0')}_${photo.colorName}_${photo.hex.replace('#','')}.jpg`;
-    a.href = photo.image;
-    a.click();
+  function changeZoom(v) {
+    if (track && track.setConstraints) {
+      track.setConstraints({ advanced: [{ zoom: parseFloat(v) }] });
+    }
   }
-  showToast(`📦 ${backupPhotos.length}장 다운로드 완료!`);
-}
 
-function clearBackup() {
-  triggerVibration();
-  if (backupPhotos.length === 0) { showToast('백업이 없어요!'); return; }
-  if (!confirm(`백업 사진 ${backupPhotos.length}장을 모두 삭제할까요?\n이 작업은 되돌릴 수 없어요.`)) return;
-  backupPhotos = [];
-  clearBackupsInDB(); // ✅ 수정: 데이터베이스 청소
-  renderBackup();
-  showToast('🗑 백업 삭제 완료');
-}
-
-function toggleBackupAdmin() {
-  triggerVibration();
-  if (isBackupAdmin) {
-    isBackupAdmin = false;
-    document.getElementById('backupPanel').style.display = 'none';
-    document.getElementById('backupLockedMsg').style.display = 'block';
-    document.getElementById('backupLoginBtn').textContent = '🔒 관리자';
-    document.getElementById('backupLoginBtn').classList.remove('on');
-    showToast('🔒 백업 로그아웃'); return;
-  }
-  const pw = prompt('관리자 비밀번호를 입력해주세요:');
-  if (pw === null) return;
-  if (checkAdminPassword(pw)) { // ✅ 수정: 안전한 검증 우회 기법 적용
-    isBackupAdmin = true;
-    document.getElementById('backupLockedMsg').style.display = 'none';
-    document.getElementById('backupPanel').style.display = 'block';
-    document.getElementById('backupLoginBtn').textContent = '🔓 로그아웃';
-    document.getElementById('backupLoginBtn').classList.add('on');
-    renderBackup();
-    showToast('🔓 백업 로그인 성공!');
-  } else { showToast('❌ 비밀번호 불일치'); }
-}
-
-function renderGallery() {
-  const grid = document.getElementById('galleryGrid');
-  const empty = document.getElementById('galleryEmpty');
-  document.getElementById('galleryCount').textContent = `${photos.length}장`;
-  if (photos.length === 0) { empty.style.display = 'block'; grid.style.display = 'none'; return; }
-  empty.style.display = 'none'; grid.style.display = 'grid'; grid.innerHTML = '';
-  photos.forEach(photo => {
-    const card = document.createElement('div');
-    card.className = 'photo-card';
-    card.innerHTML = `<img class="photo-img" src="${photo.image}" alt="촬영 사진">
-      <div class="photo-info">
-        <div class="photo-color-row"><div class="photo-swatch" style="background:${photo.hex}"></div><span class="photo-color-name">${photo.colorName}</span></div>
-        <div class="photo-hex">${photo.hex} &middot; R:${photo.r} G:${photo.g} B:${photo.b}</div>
-        <div class="photo-filter">🔍 ${photo.filter}</div>
-        <div class="photo-time">${photo.time}</div>
-        <div class="photo-actions">
-          <button class="btn-share" onclick="shareColor('${photo.hex}','${photo.colorName}')">🚀 공유</button>
-          <button class="btn-download" onclick="downloadPhoto(${photo.id})">💾 저장</button>
-          <button class="btn-delete" onclick="deletePhoto(${photo.id})">🗑 삭제</button>
-        </div>
-      </div>`;
-    grid.appendChild(card);
-  });
-}
-
-function shareColor(hex, name) {
-  triggerVibration();
-  if (navigator.share) {
-    navigator.share({ title: '색상 공유', text: `제가 발견한 색상은 ${name} (${hex}) 입니다! Color Scan 앱에서 확인해보세요.` }).catch(console.error);
-  } else {
-    showToast('이 브라우저에서는 공유 기능을 지원하지 않아요.');
-  }
-}
-
-function downloadPhoto(id) {
-  triggerVibration();
-  const photo = photos.find(p => p.id === id);
-  if (!photo) return;
-  const dc = document.createElement('canvas');
-  const img = new Image();
-  img.onload = () => {
-    const pad = 20, infoH = 110;
-    dc.width = img.width; dc.height = img.height + infoH;
-    const c = dc.getContext('2d');
-    c.fillStyle = '#ffffff'; c.fillRect(0, 0, dc.width, dc.height);
-    c.drawImage(img, 0, 0);
-    c.fillStyle = '#f5f0eb'; c.fillRect(0, img.height, dc.width, infoH);
-    c.fillStyle = photo.hex; c.roundRect(pad, img.height + 14, 60, 60, 12); c.fill();
-    c.fillStyle = '#1a1a1a'; c.font = 'bold 20px sans-serif';
-    c.fillText(photo.colorName, pad + 72, img.height + 36);
-    c.fillStyle = '#999'; c.font = '13px monospace';
-    c.fillText(`${photo.hex}  R:${photo.r} G:${photo.g} B:${photo.b}`, pad + 72, img.height + 56);
-    c.fillStyle = '#ff6b35'; c.font = '12px sans-serif';
-    c.fillText(`필터: ${photo.filter}`, pad + 72, img.height + 76);
-    c.fillStyle = '#bbb'; c.font = '11px sans-serif';
-    c.fillText(photo.time, pad + 72, img.height + 94);
-    const a = document.createElement('a');
-    a.download = `colorscan_${photo.colorName}_${photo.hex.replace('#', '')}.jpg`;
-    a.href = dc.toDataURL('image/jpeg', 0.95); a.click();
-    showToast('💾 저장 완료!');
-  };
-  img.src = photo.image;
-}
-
-function deletePhoto(id) { triggerVibration(); photos = photos.filter(p => p.id !== id); renderGallery(); showToast('🗑 삭제됨'); }
-
-function toggleAdmin() {
-  triggerVibration();
-  if (isAdmin) {
-    isAdmin = false;
-    document.getElementById('adminPanel').style.display = 'none';
-    document.getElementById('logLockedMsg').style.display = 'block';
-    document.getElementById('adminLoginBtn').textContent = '🔒 관리자';
-    document.getElementById('adminLoginBtn').classList.remove('on');
-    showToast('🔒 로그아웃'); return;
-  }
-  const pw = prompt('관리자 비밀번호를 입력해주세요:');
-  if (pw === null) return;
-  if (checkAdminPassword(pw)) { // ✅ 수정: 안전한 검증 우회 기법 적용
-    isAdmin = true;
-    document.getElementById('logLockedMsg').style.display = 'none';
-    document.getElementById('adminPanel').style.display = 'block';
-    document.getElementById('adminLoginBtn').textContent = '🔓 로그아웃';
-    document.getElementById('adminLoginBtn').classList.add('on');
-    renderLog();
-    showToast('🔓 로그인 성공!');
-  } else { showToast('❌ 비밀번호 불일치'); }
-}
-
-function renderLog() {
-  if (!document.getElementById('logEmpty')) return;
-  const empty = document.getElementById('logEmpty');
-  const wrap = document.getElementById('logTableWrap');
-  const body = document.getElementById('logTableBody');
-  document.getElementById('logCount').textContent = `${rgbLog.length}건`;
-  if (rgbLog.length === 0) { empty.style.display = 'block'; wrap.style.display = 'none'; return; }
-  empty.style.display = 'none'; wrap.style.display = 'block'; body.innerHTML = '';
-  rgbLog.forEach(log => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td><span class="log-swatch" style="background:${log.hex}"></span></td>
-      <td style="font-weight:600">${log.colorName}</td>
-      <td style="font-family:monospace;font-size:11px">${log.hex}</td>
-      <td style="color:#e74c4c;font-family:monospace">${log.r}</td>
-      <td style="color:#27ae60;font-family:monospace">${log.g}</td>
-      <td style="color:#2980b9;font-family:monospace">${log.b}</td>
-      <td style="font-size:10px;color:var(--accent)">${log.filter || '일반'}</td>
-      <td style="font-size:10px;color:var(--muted)">${log.time}</td>`;
-    body.appendChild(tr);
-  });
-}
-
-function exportCSV() {
-  triggerVibration();
-  if (rgbLog.length === 0) { showToast('저장된 기록이 없어요!'); return; }
-  const header = '날짜,색상이름,HEX,R,G,B,필터\n';
-  const rows = rgbLog.map(l => `${l.time},${l.colorName},${l.hex},${l.r},${l.g},${l.b},${l.filter || '일반'}`).join('\n');
-  const blob = new Blob(['\uFEFF' + header + rows], { type: 'text/csv;charset=utf-8;' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `colorscan_rgb_${new Date().toLocaleDateString('ko-KR').replace(/\. /g, '-').replace('.', '')}.csv`;
-  a.click(); showToast('📥 CSV 저장 완료!');
-}
-
-function clearLog() {
-  triggerVibration();
-  if (rgbLog.length === 0) { showToast('기록이 없어요!'); return; }
-  if (!confirm(`RGB 기록 ${rgbLog.length}건을 모두 삭제할까요?`)) return;
-  rgbLog = [];
-  clearLogsInDB(); // ✅ 수정: 데이터베이스 청소
-  renderLog();
-  showToast('🗑 기록 초기화 완료');
-}
-
-// ---------------------------
-// 음성 / 손전등 / 색상 판별
-// ---------------------------
-function unlockAudio() {
-  if (audioUnlocked) return;
-  try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; window.speechSynthesis.speak(u); audioUnlocked = true; } catch(e) {}
-}
-
-function speak(text) {
-  if (!soundOn || !audioUnlocked) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ko-KR'; u.rate = 0.9; u.volume = 1;
-  window.speechSynthesis.speak(u);
-}
-
-function toggleSound() {
-  triggerVibration();
-  soundOn = !soundOn;
-  if (soundOn) { unlockAudio(); setTimeout(() => speak('음성 안내 시작'), 300); }
-  document.getElementById('soundIcon').textContent = soundOn ? '🔊' : '🔇';
-  document.getElementById('soundLabel').textContent = soundOn ? '음성 켜짐' : '음성 켜기';
-  document.getElementById('btnSound').classList.toggle('on', soundOn);
-}
-
-let torchOn = false;
-async function toggleTorch() {
-  triggerVibration();
-  try {
-    const track = video.srcObject?.getVideoTracks()[0];
+  function toggleTorch() {
     if (!track) return;
-    const capabilities = track.getCapabilities();
-    if (!capabilities.torch) { showToast('이 기기는 손전등을 지원하지 않아요 😢'); return; }
-    torchOn = !torchOn;
-    await track.applyConstraints({ advanced: [{ torch: torchOn }] });
-    const btn = document.getElementById('torchBtn');
-    btn.classList.toggle('on', torchOn);
-    btn.textContent = torchOn ? '💡' : '🔦';
-    showToast(torchOn ? '💡 손전등 켜짐' : '🔦 손전등 꺼짐');
-  } catch(e) { showToast('손전등 사용이 불가능해요 😢'); }
-}
-
-function getColorName(r, g, b) {
-  const max = Math.max(r, g, b), min = Math.min(r, g, b), delta = max - min;
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-  const saturation = max === 0 ? 0 : delta / max;
-  const lightness = (max + min) / 2 / 255;
-  if (brightness < 25) return '검정';
-  if (brightness < 55) return '매우 어두운 회색';
-  if (brightness > 245 && saturation < 0.06) return '흰색';
-  if (brightness > 225 && saturation < 0.08) return '아이보리';
-  if (saturation < 0.08) {
-    if (brightness < 80) return '짙은 회색';
-    if (brightness < 120) return '어두운 회색';
-    if (brightness < 160) return '회색';
-    if (brightness < 195) return '밝은 회색';
-    if (brightness < 225) return '연회색';
-    return '흰색에 가까운 회색';
+    triggerVibration();
+    const caps = track.getCapabilities ? track.getCapabilities() : {};
+    if (!caps.torch) return;
+    const isOn = torchBtn.classList.contains('on');
+    track.applyConstraints({ advanced: [{ torch: !isOn }] })
+      .then(() => torchBtn.classList.toggle('on'))
+      .catch(() => showToast('🔦 플래시 제어 실패'));
   }
-  if (saturation < 0.35 && r > g && r > b) {
-    if (brightness < 60) return '짙은 갈색';
-    if (brightness < 100) return '갈색';
-    if (brightness < 140) return '황갈색';
-    if (brightness < 180) return '카키색';
-    if (brightness < 215) return '베이지';
-    return '크림색';
-  }
-  let hue = 0;
-  if (max === r) hue = ((g - b) / delta) % 6;
-  else if (max === g) hue = (b - r) / delta + 2;
-  else hue = (r - g) / delta + 4;
-  hue = Math.round(hue * 60);
-  if (hue < 0) hue += 360;
-  const isDark = lightness < 0.25, isLight = lightness > 0.72, isVibrant = saturation > 0.6;
-  if (hue < 8 || hue >= 352)  { if (isDark) return '다크 레드';    if (isLight) return '연분홍';      if (isVibrant) return '빨간색';    return '적색'; }
-  if (hue < 20)                { if (isDark) return '다크 오렌지';  if (isLight) return '살구색';      return '주홍색'; }
-  if (hue < 40)                { if (isDark) return '진한 주황';    if (isLight) return '복숭아색';    if (isVibrant) return '주황색';    return '오렌지'; }
-  if (hue < 55)                { if (isDark) return '황토색';       if (isLight) return '연노랑';      return '황금색'; }
-  if (hue < 68)                { if (isDark) return '올리브색';     if (isLight) return '밝은 노랑';   return '노란색'; }
-  if (hue < 85)                { if (isDark) return '올리브 그린';  if (isLight) return '연두색';      return '황록색'; }
-  if (hue < 140)               { if (isDark) return '짙은 초록';   if (isLight) return '민트그린';    if (hue < 110) return '풀색'; return '초록색'; }
-  if (hue < 175)               { if (isDark) return '다크 그린';   if (isLight) return '연한 청록';   return '청록색'; }
-  if (hue < 200)               { if (isDark) return '짙은 청록';   if (isLight) return '하늘색';      if (isVibrant) return '시안'; return '청록색'; }
-  if (hue < 230)               { if (isDark) return '짙은 파랑';   if (isLight) return '하늘색';      if (isVibrant) return '파란색';    return '파란색'; }
-  if (hue < 255)               { if (isDark) return '네이비';       if (isLight) return '연파랑';      if (isVibrant) return '코발트블루'; return '진파랑'; }
-  if (hue < 285)               { if (isDark) return '짙은 남색';   if (isLight) return '라벤더';      if (isVibrant) return '보라색';    return '남보라'; }
-  if (hue < 320)               { if (isDark) return '다크 퍼플';   if (isLight) return '연보라';      if (isVibrant) return '보라색';    return '자주색'; }
-  if (hue < 345)               { if (isDark) return '와인색';       if (isLight) return '핑크';        if (isVibrant) return '마젠타';    return '분홍색'; }
-  return '알수없음';
-}
 
-// ✅ 추가: 페이지 구동 시 IndexedDB 연결 및 자동 바인딩 트리거
-window.addEventListener('DOMContentLoaded', () => {
-  initDB().then(() => {
-    return Promise.all([loadLogsFromDB(), loadBackupsFromDB()]);
-  }).then(() => {
+  function toggleSound() {
+    triggerVibration();
+    isSoundOn = !isSoundOn;
+    const btn = document.getElementById('btnSound');
+    document.getElementById('soundIcon').textContent = isSoundOn ? '🔊' : '🔇';
+    document.getElementById('soundLabel').textContent = isSoundOn ? '음성 켜짐' : '음성 켜기';
+    btn.classList.toggle('on', isSoundOn);
+    if (!isSoundOn && synth) synth.cancel();
+  }
+
+  function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    isStatic = true;
+    captureBtn.disabled = false;
+    if (stream) {
+      stream.getTracks().forEach(t => t.stop());
+      document.getElementById('statusDot').classList.remove('active');
+      torchBtn.classList.remove('on');
+      torchBtn.disabled = true;
+    }
+    overlayStart.style.display = 'none';
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      staticImg.src = evt.target.result;
+      staticImg.style.display = 'block';
+      video.style.display = 'none';
+      document.getElementById('statusText').textContent = '불러온 이미지';
+      staticImg.onload = () => startLoop();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function moveReticle(e) {
+    const frame = document.getElementById('cameraFrame');
+    const rect = frame.getBoundingClientRect();
+    let clientX = e.clientX, clientY = e.clientY;
+    if (e.touches && e.touches[0]) {
+      clientX = e.touches[0].clientX; clientY = e.touches[0].clientY;
+    }
+    rx = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+    ry = Math.max(0, Math.min(100, ((clientY - rect.top) / rect.height) * 100));
+    
+    const ui = document.getElementById('reticleUI');
+    ui.style.left = rx + '%';
+    ui.style.top = ry + '%';
+    if (isStatic) analyzeFrame();
+  }
+
+  function setFilter(type, btn) {
+    triggerVibration();
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const view = isStatic ? staticImg : video;
+    if (type === 'normal') {
+      view.style.filter = 'none';
+      filterBadge.style.display = 'none';
+      filterName = '일반';
+    } else {
+      view.style.filter = `url(#${type})`;
+      filterBadge.style.display = 'block';
+      filterBadge.textContent = btn.textContent.replace(/[^\uAC00-\uD7A3xfe0-\xffw]/g, '').trim();
+      filterName = filterBadge.textContent;
+    }
+    if (isStatic) analyzeFrame();
+  }
+
+  function startLoop() {
+    if (animationId) cancelAnimationFrame(animationId);
+    function tick() {
+      if (!isStatic) { analyzeFrame(); animationId = requestAnimationFrame(tick); }
+    }
+    if (!isStatic) animationId = requestAnimationFrame(tick);
+    else analyzeFrame();
+  }
+
+  function analyzeFrame() {
+    const src = isStatic ? staticImg : video;
+    if (!isStatic && (video.readyState < video.HAVE_CURRENT_DATA)) return;
+
+    canvas.width = src.naturalWidth || src.videoWidth || 600;
+    canvas.height = src.naturalHeight || src.videoHeight || 600;
+    if (canvas.width === 0) return;
+
+    ctx.drawImage(src, 0, 0, canvas.width, canvas.height);
+    const px = Math.floor((rx / 100) * canvas.width);
+    const py = Math.floor((ry / 100) * canvas.height);
+
+    try {
+      const imgData = ctx.getImageData(px, py, 1, 1).data;
+      const r = imgData[0], g = imgData[1], b = imgData[2];
+      
+      // 분석 수치 글로벌 바인딩
+      currentR = r; currentG = g; currentB = b;
+      currentHex = rgbToHex(r, g, b);
+      currentColorName = getColorName(r, g, b);
+
+      updateUI(r, g, b, currentHex, currentColorName);
+      if (isSoundOn) speakColor(currentColorName);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function rgbToHex(r, g, b) {
+    return "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
+  }
+
+  function updateUI(r, g, b, hex, name) {
+    document.getElementById('colorSwatch').style.backgroundColor = hex;
+    document.getElementById('colorName').textContent = name;
+    document.getElementById('colorHex').textContent = hex;
+
+    document.getElementById('valR').textContent = r;
+    document.getElementById('valG').textContent = g;
+    document.getElementById('valB').textContent = b;
+
+    document.getElementById('barR').style.width = (r / 255 * 100) + '%';
+    document.getElementById('barG').style.width = (g / 255 * 100) + '%';
+    document.getElementById('barB').style.width = (b / 255 * 100) + '%';
+
+    // 서브 팔레트 매칭 생성
+    const pal = document.getElementById('colorPalette');
+    pal.innerHTML = '';
+    const offsets = [-20, -10, 10, 20];
+    offsets.forEach(o => {
+      const nr = Math.max(0, Math.min(255, r + o));
+      const ng = Math.max(0, Math.min(255, g + o));
+      const nb = Math.max(0, Math.min(255, b + o));
+      const div = document.createElement('div');
+      div.className = 'palette-color';
+      div.style.backgroundColor = rgbToHex(nr, ng, nb);
+      pal.appendChild(div);
+    });
+  }
+
+  function speakColor(name) {
+    if (name === lastSpokenColor) return;
+    clearTimeout(speakTimeout);
+    speakTimeout = setTimeout(() => {
+      if (!isSoundOn || !synth) return;
+      synth.cancel();
+      const utterance = new SpeechSynthesisUtterance(name);
+      utterance.lang = 'ko-KR';
+      utterance.rate = 1.0;
+      utterance.onend = () => { lastSpokenColor = name; };
+      synth.speak(utterance);
+    }, 400);
+  }
+
+  // 셔터 및 다중 배열 데이터 분배 적재
+  function capturePhoto() {
+    triggerVibration();
+    const flash = document.getElementById('flashOverlay');
+    flash.classList.add('flash');
+    setTimeout(() => flash.classList.remove('flash'), 60);
+
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+    const d = new Date();
+    const timeStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    
+    const photoData = {
+      id: Date.now(),
+      src: dataUrl,
+      colorName: currentColorName,
+      hex: currentHex,
+      filter: filterName,
+      time: timeStr
+    };
+
+    // 일반 사용자 갤러리 보관
+    photos.unshift(photoData);
+    localStorage.setItem('photos', JSON.stringify(photos));
+
+    // 관리자 전용 RGB 원장 기록 누적
+    rgbLog.unshift({
+      id: photoData.id,
+      colorName: currentColorName,
+      hex: currentHex,
+      r: currentR,
+      g: currentG,
+      b: currentB,
+      filter: filterName,
+      time: timeStr
+    });
+    localStorage.setItem('rgbLog', JSON.stringify(rgbLog));
+
+    // 관리자 전용 독립 사진 백업 스토리지 보관
+    backupPhotos.unshift({ ...photoData });
+    try {
+      localStorage.setItem('backupPhotos', JSON.stringify(backupPhotos));
+    } catch(e) {
+      showToast('⚠️ 백업 저장 공간(용량)이 부족합니다.');
+    }
+
+    renderGallery();
+    if (isAdmin) {
+      renderLog();
+      renderBackup();
+    }
+    showToast('📸 사진이 촬영되고 로그가 백업되었습니다.');
+  }
+
+  // 갤러리 렌더링 (안전한 문자열 ID 변환 연산 적용)
+  function renderGallery() {
+    const grid = document.getElementById('galleryGrid');
+    const empty = document.getElementById('galleryEmpty');
+    document.getElementById('galleryCount').textContent = `${photos.length}장`;
+
+    if (photos.length === 0) {
+      empty.style.display = 'block';
+      grid.style.display = 'none';
+      return;
+    }
+    empty.style.display = 'none';
+    grid.style.display = 'grid';
+    grid.innerHTML = '';
+
+    photos.forEach(photo => {
+      const card = document.createElement('div');
+      card.className = 'photo-card';
+      card.innerHTML = `
+        <img class="photo-img" src="${photo.src}" alt="">
+        <div class="photo-info">
+          <div class="photo-color-row">
+            <span class="photo-swatch" style="background:${photo.hex}"></span>
+            <span class="photo-color-name">${photo.colorName}</span>
+          </div>
+          <div class="photo-hex">${photo.hex}</div>
+          <div class="photo-filter">필터: ${photo.filter || '일반'}</div>
+          <div class="photo-time">${photo.time}</div>
+          <div class="photo-actions">
+            <button class="btn-download" onclick="downloadPhoto('${photo.id}')">💾</button>
+            <button class="btn-share" onclick="shareColor('${photo.id}')">공유</button>
+            <button class="btn-delete" onclick="deletePhoto('${photo.id}')">🗑</button>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  // 관리자 전용 로그 렌더링
+  function renderLog() {
+    if (!document.getElementById('logEmpty')) return;
+    const empty = document.getElementById('logEmpty');
+    const wrap = document.getElementById('logTableWrap');
+    const body = document.getElementById('logTableBody');
+    document.getElementById('logCount').textContent = `${rgbLog.length}건`;
+
+    if (rgbLog.length === 0) {
+      empty.style.display = 'block';
+      wrap.style.display = 'none';
+      return;
+    }
+    empty.style.display = 'none';
+    wrap.style.display = 'block';
+    body.innerHTML = '';
+
+    rgbLog.forEach(log => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span class="log-swatch" style="background:${log.hex}"></span></td>
+        <td style="font-weight:600">${log.colorName}</td>
+        <td style="font-family:monospace;font-size:11px">${log.hex}</td>
+        <td style="color:#e74c4c;font-family:monospace">${log.r}</td>
+        <td style="color:#27ae60;font-family:monospace">${log.g}</td>
+        <td style="color:#2980b9;font-family:monospace">${log.b}</td>
+        <td style="font-size:10px;color:var(--accent)">${log.filter || '일반'}</td>
+        <td style="font-size:10px;color:var(--muted)">${log.time}</td>
+      `;
+      body.appendChild(tr);
+    });
+  }
+
+  // 관리자 전용 백업 아카이브 리스트 렌더링
+  function renderBackup() {
+    const grid = document.getElementById('backupGrid');
+    const empty = document.getElementById('backupEmpty');
+    document.getElementById('backupCount').textContent = `${backupPhotos.length}장`;
+
+    if (!grid) return;
+    if (backupPhotos.length === 0) {
+      empty.style.display = 'block';
+      grid.style.display = 'none';
+      return;
+    }
+    empty.style.display = 'none';
+    grid.style.display = 'grid';
+    grid.innerHTML = '';
+
+    backupPhotos.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'backup-card';
+      card.innerHTML = `
+        <img class="backup-img" src="${p.src}">
+        <div class="backup-info">
+          <div class="backup-color-row">
+            <span class="backup-swatch" style="background:${p.hex}"></span>
+            <span class="backup-color-name">${p.colorName}</span>
+          </div>
+          <div class="backup-hex">${p.hex}</div>
+          <div class="backup-time">${p.time}</div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  // 데이터 가공 다운로드 유틸리티 (타입 불일치 방지 보완 완료)
+  function downloadPhoto(id) {
+    triggerVibration();
+    const photo = photos.find(p => String(p.id) === String(id));
+    if (!photo) return;
+
+    const dc = document.createElement('canvas');
+    const img = new Image();
+    img.onload = () => {
+      const pad = 20, infoH = 110;
+      dc.width = img.width;
+      dc.height = img.height + infoH;
+      const c = dc.getContext('2d');
+
+      c.fillStyle = '#ffffff';
+      c.fillRect(0, 0, dc.width, dc.height);
+      c.drawImage(img, 0, 0);
+
+      c.fillStyle = '#f5f0eb';
+      c.fillRect(0, img.height, dc.width, infoH);
+
+      c.fillStyle = photo.hex;
+      c.beginPath();
+      if(c.roundRect) {
+        c.roundRect(pad, img.height + 14, 60, 60, 12);
+      } else {
+        c.rect(pad, img.height + 14, 60, 60);
+      }
+      c.fill();
+
+      c.fillStyle = '#1a1a1a';
+      c.font = 'bold 20px sans-serif';
+      c.fillText(photo.colorName, pad + 76, img.height + 40);
+
+      c.fillStyle = '#999999';
+      c.font = '14px monospace';
+      c.fillText(`${photo.hex} | ${photo.filter || '일반 필터'}`, pad + 76, img.height + 62);
+      c.fillText(photo.time, pad + 76, img.height + 80);
+
+      const link = document.createElement('a');
+      link.download = `colorscan_${photo.id}.jpg`;
+      link.href = dc.toDataURL('image/jpeg', 0.9);
+      link.click();
+    };
+    img.src = photo.src;
+  }
+
+  function shareColor(id) {
+    triggerVibration();
+    const photo = photos.find(p => String(p.id) === String(id));
+    if (!photo) return;
+    if (navigator.share) {
+      navigator.share({ title: '색상 감지 결과', text: `감지된 색: ${photo.colorName} (${photo.hex})`, url: location.href })
+        .catch(console.error);
+    } else {
+      navigator.clipboard.writeText(`${photo.colorName} (${photo.hex})`).then(() => showToast('📋 색상 정보가 복사되었습니다.'));
+    }
+  }
+
+  function deletePhoto(id) {
+    triggerVibration();
+    if (!confirm('사진을 삭제할까요? (백업본은 유지됩니다)')) return;
+    photos = photos.filter(p => String(p.id) !== String(id));
+    localStorage.setItem('photos', JSON.stringify(photos));
+    renderGallery();
+  }
+
+  function exportCSV() {
+    if (rgbLog.length === 0) return showToast('내보낼 기록이 없습니다.');
+    let csv = '\uFEFF색상이름,HEX,R,G,B,적용필터,기록시간\n';
+    rgbLog.forEach(l => {
+      csv += `"${l.colorName}","${l.hex}",${l.r},${l.g},${l.b},"${l.filter || '일반'}","${l.time}"\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `rgb_history_${Date.now()}.csv`;
+    link.click();
+  }
+
+  function clearLog() {
+    if (!confirm('모든 RGB 기록을 영구 초기화할까요?')) return;
+    rgbLog = [];
+    localStorage.removeItem('rgbLog');
     renderLog();
+    showToast('🗑 기록이 초기화되었습니다.');
+  }
+
+  function downloadBackupZip() {
+    if (backupPhotos.length === 0) return showToast('백업된 사진 아카이브가 비어있습니다.');
+    showToast('📦 순차 다운로드를 구성 중입니다.');
+    backupPhotos.forEach((p, idx) => {
+      setTimeout(() => {
+        const link = document.createElement('a');
+        link.download = `backup_photo_${p.id}.jpg`;
+        link.href = p.src;
+        link.click();
+      }, idx * 400);
+    });
+  }
+
+  function clearBackup() {
+    if (!confirm('⚠️ 백업 저장소 전체를 영구 파기합니까? 일반 유저 데이터에는 영향이 없습니다.')) return;
+    backupPhotos = [];
+    localStorage.removeItem('backupPhotos');
     renderBackup();
-  }).catch(err => {
-    console.error("데이터베이스 초기화 실패:", err);
-  });
-});
+    showToast('🗑 백업 저장소가 전면 파기되었습니다.');
+  }
+
+  // 173가지 수치 기반 컬러 인덱서
+  function getColorName(r, g, b) {
+    let minD = Infinity; let match = '알 수 없음';
+    const parsed = rgbToHsl(r, g, b);
+    const hue = parsed[0], sat = parsed[1], lgt = parsed[2];
+
+    if (lgt < 12) return '검은색';
+    if (lgt > 88 && sat < 12) return '흰색';
+    if (sat < 10) {
+      if (lgt < 35) return '어두운 회색';
+      if (lgt < 65) return '회색';
+      return '밝은 회색';
+    }
+
+    const isLight = lgt > 70; const isDark = lgt < 38; const isVibrant = sat > 75;
+
+    if (hue < 10 || hue >= 350) { if (isDark) return '밤색'; if (isLight) return '연분홍색'; return '빨간색'; }
+    if (hue < 22)                { if (isDark) return '황토색'; if (isLight) return '살구색'; return '주황색'; }
+    if (hue < 38)                { if (isDark) return '갈색'; if (isLight) return '연주황'; return '오렌지'; }
+    if (hue < 55)                { if (isDark) return '황토색'; if (isLight) return '연노랑'; return '황금색'; }
+    if (hue < 68)                { if (isDark) return '올리브색'; if (isLight) return '밝은 노랑'; return '노란색'; }
+    if (hue < 85)                { if (isDark) return '올리브 그린'; if (isLight) return '연두색'; return '황록색'; }
+    if (hue < 140)               { if (isDark) return '짙은 초록'; if (isLight) return '민트그린'; if (hue < 110) return '풀색'; return '초록색'; }
+    if (hue < 175)               { if (isDark) return '다크 그린'; if (isLight) return '연한 청록'; return '청록색'; }
+    if (hue < 200)               { if (isDark) return '짙은 청록'; if (isLight) return '하늘색'; if (isVibrant) return '시안'; return '청록색'; }
+    if (hue < 230)               { if (isDark) return '짙은 파랑'; if (isLight) return '하늘색'; if (isVibrant) return '파란색'; return '파란색'; }
+    if (hue < 255)               { if (isDark) return '네이비'; if (isLight) return '연보라'; return '남색'; }
+    if (hue < 285)               { if (isDark) return '짙은 보라'; if (isLight) return '라벤더색'; return '보라색'; }
+    if (hue < 315)               { if (isDark) return '자주색'; if (isLight) return '핫핑크'; return '보라색'; }
+    if (hue < 350)               { if (isDark) return '짙은 자주'; if (isLight) return '분홍색'; return '자주색'; }
+    return '색상 분석 중';
+  }
+
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
+      }
+      h /= 6;
+    }
+    return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+  }
+
+  // 초기화 렌더러
+  renderGallery();
 </script>
 </body>
 </html>
-
